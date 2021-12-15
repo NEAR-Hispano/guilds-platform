@@ -1,121 +1,151 @@
-/*
- * This is an example of a Rust smart contract with two simple, symmetric functions:
- *
- * 1. set_greeting: accepts a greeting, such as "howdy", and records it for the user (account_id)
- *    who sent the request
- * 2. get_greeting: accepts an account_id and returns the greeting saved for it, defaulting to
- *    "Hello"
- *
- * Learn more about writing NEAR smart contracts with Rust:
- * https://github.com/near/near-sdk-rs
- *
- */
-
-// To conserve gas, efficient serialization is achieved through Borsh (http://borsh.io/)
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{env, near_bindgen, setup_alloc};
-use near_sdk::collections::LookupMap;
+use near_sdk::{near_bindgen, env, setup_alloc, AccountId};
+use near_sdk::serde::{Serialize, Deserialize};
+use near_sdk::collections::UnorderedMap;
+use std::collections::HashSet;
+
+use std::convert::From;
 
 setup_alloc!();
 
-// Structs in Rust are similar to other languages, and may include impl keyword as shown below
-// Note: the names of the structs are not important when calling the smart contract, but the function names are
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
-pub struct Welcome {
-    records: LookupMap<String, String>,
+pub struct GuildsPlatform {
+    guilds: UnorderedMap<String, UpgradableGuild>,
 }
 
-impl Default for Welcome {
-  fn default() -> Self {
-    Self {
-      records: LookupMap::new(b"a".to_vec()),
+//Initializing the contract
+impl Default for GuildsPlatform {
+    fn default() -> Self {
+      Self {
+        guilds: UnorderedMap::new(b"g".to_vec()),
+      }
     }
   }
+
+
+//Implementation for upgradable contract
+#[derive(Serialize, Deserialize, BorshSerialize, BorshDeserialize)]
+#[serde(crate = "near_sdk::serde")]
+pub enum UpgradableGuild {
+    CurrentVersion(Guild),
+}
+
+impl From<UpgradableGuild> for Guild {
+    fn from(guild: UpgradableGuild) -> Self {
+        match guild {
+            UpgradableGuild::CurrentVersion(guild) => guild,  
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, BorshSerialize, BorshDeserialize)]
+#[serde(crate = "near_sdk::serde")]
+pub struct Guild {
+    pub slug: String,
+    pub title: String,
+    pub oneliner: String,
+    pub website: String,
+    pub app: String,
+    pub whitepaper: String,
+    pub twitter: String,
+    pub telegram: String,
+    pub discord: String,
+    pub medium: String,
+    pub github: String,
+    pub ticker: String,
+    pub logo: String,
+    pub contract_str: String,
+    pub youtube: String,
+    pub members: HashSet<AccountId>,
+}
+
+#[derive(BorshSerialize, BorshDeserialize)]
+pub enum GuildStatus {
+    Launched,
+    NotLaunched,
 }
 
 #[near_bindgen]
-impl Welcome {
-    pub fn set_greeting(&mut self, message: String) {
-        let account_id = env::signer_account_id();
+impl GuildsPlatform {
+    pub fn create_guild(
+        &mut self, 
+        slug: String,
+        title: String,
+        oneliner: String,
+        website: String,
+        app: String,
+        whitepaper: String,
+        twitter: String,
+        telegram: String,
+        discord: String,
+        medium: String,
+        github: String,
+        ticker: String,
+        logo: String,
+        youtube: String,
+        contract_str: String,
+    ){
+        let guild = UpgradableGuild::CurrentVersion(Guild {
+            slug: String::from(&slug),
+            title: String::from(&title),
+            oneliner: String::from(&oneliner),
+            website: String::from(&website),
+            app: String::from(&app),
+            whitepaper: String::from(&whitepaper),
+            twitter: String::from(&twitter),
+            telegram: String::from(&telegram),
+            discord: String::from(&discord),
+            medium: String::from(&medium),
+            github: String::from(&github),
+            ticker: String::from(&ticker),
+            logo: String::from(&logo),
+            contract_str: String::from(&contract_str),
+            youtube: String::from(&youtube),
+            members: HashSet::new(),
+        });
 
-        // Use env::log to record logs permanently to the blockchain!
-        env::log(format!("Saving greeting '{}' for account '{}'", message, account_id,).as_bytes());
+        self.guilds.insert(&slug, &guild);
 
-        self.records.insert(&account_id, &message);
+        env::log(format!("Saving guild '{}'", &slug,).as_bytes());
     }
 
-    // `match` is similar to `switch` in other languages; here we use it to default to "Hello" if
-    // self.records.get(&account_id) is not yet defined.
-    // Learn more: https://doc.rust-lang.org/book/ch06-02-match.html#matching-with-optiont
-    pub fn get_greeting(&self, account_id: String) -> String {
-        match self.records.get(&account_id) {
-            Some(greeting) => greeting,
-            None => "Hello".to_string(),
+    pub fn get_guild_info(&self, slug: String) -> Guild {
+        let guild: Guild = self.guilds.get(&slug).unwrap().into();
+
+        return guild
+    }
+
+    pub fn join_guild(&mut self, slug: String) {
+
+        //TO DO: Control over joining? Can anyone join?
+        //TO DO: On boarding of people with no account.
+        let mut guild: Guild = self.guilds.get(&slug).unwrap().into();
+        let account_to_insert = env::predecessor_account_id();
+        
+        if guild.members.get(&account_to_insert).is_none() {
+            guild.members.insert(account_to_insert);
+            self.guilds.insert(&slug,&UpgradableGuild::CurrentVersion(guild));
+            env::log(format!("'{}' just joined '{}'!", env::predecessor_account_id(), &slug,).as_bytes());
         }
-    }
-}
-
-/*
- * The rest of this file holds the inline tests for the code above
- * Learn more about Rust tests: https://doc.rust-lang.org/book/ch11-01-writing-tests.html
- *
- * To run from contract directory:
- * cargo test -- --nocapture
- *
- * From project root, to run in combination with frontend tests:
- * yarn test
- *
- */
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use near_sdk::MockedBlockchain;
-    use near_sdk::{testing_env, VMContext};
-
-    // mock the context for testing, notice "signer_account_id" that was accessed above from env::
-    fn get_context(input: Vec<u8>, is_view: bool) -> VMContext {
-        VMContext {
-            current_account_id: "alice_near".to_string(),
-            signer_account_id: "bob_near".to_string(),
-            signer_account_pk: vec![0, 1, 2],
-            predecessor_account_id: "carol_near".to_string(),
-            input,
-            block_index: 0,
-            block_timestamp: 0,
-            account_balance: 0,
-            account_locked_balance: 0,
-            storage_usage: 0,
-            attached_deposit: 0,
-            prepaid_gas: 10u64.pow(18),
-            random_seed: vec![0, 1, 2],
-            is_view,
-            output_data_receivers: vec![],
-            epoch_height: 19,
+        else{
+            env::log(format!("'{}' is already a member of '{}'!", account_to_insert, &slug,).as_bytes());
         }
+        //TO DO: Recieve an NFT to confirm joining the guild?
     }
 
-    #[test]
-    fn set_then_get_greeting() {
-        let context = get_context(vec![], false);
-        testing_env!(context);
-        let mut contract = Welcome::default();
-        contract.set_greeting("howdy".to_string());
-        assert_eq!(
-            "howdy".to_string(),
-            contract.get_greeting("bob_near".to_string())
-        );
+    pub fn get_num_members(&self, slug: String) -> usize {
+        let guild: Guild = self.guilds.get(&slug).unwrap().into();
+
+        guild.members.len()
     }
 
-    #[test]
-    fn get_default_greeting() {
-        let context = get_context(vec![], true);
-        testing_env!(context);
-        let contract = Welcome::default();
-        // this test did not call set_greeting so should return the default "Hello" greeting
-        assert_eq!(
-            "Hello".to_string(),
-            contract.get_greeting("francis.near".to_string())
-        );
+    pub fn check_if_member(&self, slug: String) -> bool {
+        let guild: Guild = self.guilds.get(&slug).unwrap().into();
+
+        match guild.members.get(&env::predecessor_account_id()) {
+            Some(_member) => true,
+            None => false,
+        }
     }
 }
