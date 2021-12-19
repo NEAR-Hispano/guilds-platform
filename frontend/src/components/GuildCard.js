@@ -12,11 +12,7 @@ import {
 import JoinButton from './JoinButton'
 
 export default function GuildCard({guild}) {
-    
-    React.useEffect(() => {
-        //getInfoSlug(localStorage.getItem('GUILDS'), guild.slug);
-    }, []);
-    
+        
     return (
         <Col sm="3" key={`col-${guild.slug}`}>
             
@@ -24,13 +20,14 @@ export default function GuildCard({guild}) {
                 <CardBody>
                 
                 <div className="btn-wrapper profile pt-3">
-                <Link to={`profile-page/${guild.slug}`}>
+                {/*  Passing props through Link’s state */}
+                <Link to={{pathname: `profile-page/${guild.slug}`, state:{guild}}}>
                     <img
                         alt={guild.title}
                         className="img-center img-fluid"
                         width="128"
                         height="128"
-                        src={`https://github.com/near/ecosystem/blob/main${guild.logo}?raw=true`}
+                        src={guild.logo}
                     />  
                 </Link> 
                     <h4 className="title">{guild.title}</h4>

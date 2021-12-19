@@ -15,7 +15,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect, useState} from "react";
 
 // core components
 import IndexNavbar from "components/IndexNavbar.js";
@@ -23,30 +23,57 @@ import PageHeader from "components/PageHeader.js";
 import Footer from "components/Footer.js";
 
 import MainPage from "pages/MainPage";
-import { GuildsEntities } from 'services/GuildsEntities';
+import { GuildsEntities, getMainGuilds, getMoreGuilds } from 'services/GuildsEntities';
+
+
 export default function App() {
+  const [fullData, setFullData] = useState([]);
+  const [mainGuilds, setMainGuilds] = useState([]);
+  const [moreGuilds, setMoreGuilds] = useState([]);
 
-  const handleMapGuilds = async() => {
+  const handleMapGuilds =  async() => {
     //Get Guilds information
-    await GuildsEntities();
-  }
+    const response = await GuildsEntities();
+    setFullData(response);
+  }; 
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Call method to load all guilds data
     handleMapGuilds();
+  }, [] );
+
+  const handleMapMainGuilds = () => {
+    //Extract the main guilds needed to be on top list
+    const response = getMainGuilds(fullData);
+    setMainGuilds(response);
+  }
+
+  const handleMapOtherGuilds = () => {
+    //Extract the other guilds on the list
+    const response = getMoreGuilds(fullData);
+    setMoreGuilds(response);
+  }
+
+
+  useEffect(() => {
+    handleMapMainGuilds();
+    handleMapOtherGuilds();
     document.body.classList.toggle("index-page");
     // Specify how to clean up after this effect:
     return function cleanup() {
       document.body.classList.toggle("index-page");
     };
-  },[]);
+    
+  }, [ fullData ]);
+
   return (
     <>
       <IndexNavbar />
       <div className="wrapper">
         <PageHeader />
         <div className="main">
-          <MainPage />
+          <MainPage guilds={[...mainGuilds, ...moreGuilds]} />
+          {/* <MainPage guilds={[...mainGuilds, ...moreGuilds]} />  */}
         </div>
         <Footer />
       </div>

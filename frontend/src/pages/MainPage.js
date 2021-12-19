@@ -16,30 +16,14 @@
 
 */
 import GuildCard from "components/GuildCard";
-import React, { useEffect, useState } from "react";
 import {  
   Container, 
   Row
 } from "reactstrap";
 
-export default function MainPage() {
-  const [Guilds, setGuilds ] = useState([]);
-
-  // Require to be signed in near
-  /*if(!window.walletConnection.isSignedIn()){
-    try {
-      login();
-    } catch (error) {
-      console.log(error);
-    }
-  }*/
-  
-   useEffect(() => {
-    setGuilds(JSON.parse(localStorage.getItem('GUILDS')));    
-  }, [])
+export default function MainPage({guilds}) {
   
   return (
-    
     <div className="section section-examples" data-background-color="black">
       <img
         alt="..."
@@ -51,7 +35,7 @@ export default function MainPage() {
         <h2 className="title">Find a Guild</h2>
         <Row>
           {
-            Guilds.map(guild => {
+            guilds.map(guild => {
               return (
                 <GuildCard key={`card-${guild.slug}`} guild={guild}/>
               )
