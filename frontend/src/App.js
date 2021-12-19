@@ -65,7 +65,7 @@ export default function App() {
     };
     
   }, [ fullData ]);
-
+  
   return (
     <>
       <IndexNavbar />
