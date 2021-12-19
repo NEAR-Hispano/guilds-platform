@@ -15,7 +15,8 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect} from "react";
+import { useLocation } from "react-router-dom"
 // javascript plugin used to create scrollbars on windows
 //import PerfectScrollbar from "perfect-scrollbar";
 // reactstrap components
@@ -35,15 +36,16 @@ import Navigationbar from "components/Navigationbar.js";
 import Footer from "components/Footer.js";
 import JoinButton from '../components/JoinButton'
 
-import { getInfoSlug } from './../services/GuildsEntities';
-
-//let ps = null;
-
 export default function ProfilePage({match}) {
   const [guildData, setGuild] = React.useState({});
   const [ joined, setJoined ] = React.useState(undefined);
 
   const [numSubs, setNumSubs] = React.useState(0);
+
+ 
+  //Getting state passed by link route
+  const location = useLocation();
+  const info = location.state?.guild;
 
   //Query to get guild subscribers amount
   const handleSubs = async() => {
@@ -57,7 +59,19 @@ export default function ProfilePage({match}) {
       }        
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
+    if (info) {
+      localStorage.setItem('GUILD', JSON.stringify(info));
+    }    
+    
+  }, [info]);
+
+  useEffect(() => {
+    setGuild(info || JSON.parse(localStorage.getItem('GUILD')));
+  }, [info]);
+
+
+  useEffect(() => {
     handleSubs();
   }, []);
   
@@ -73,25 +87,15 @@ export default function ProfilePage({match}) {
     }  
 }
 
-  React.useEffect(() => {
-    const fulldata = localStorage.getItem('GUILDS');
-    const response = getInfoSlug(JSON.parse(fulldata), match.params.slug);
-    setGuild(response);
-    console.log(joined, ' JOINED');
-        
+  useEffect(() => {       
     if (navigator.platform.indexOf("Win") > -1) {
       document.documentElement.className += " perfect-scrollbar-on";
       document.documentElement.classList.remove("perfect-scrollbar-off");
-      //let tables = document.querySelectorAll(".table-responsive");
-      /*for (let i = 0; i < tables.length; i++) {
-        ps = new PerfectScrollbar(tables[i]);
-      }*/
     }
     document.body.classList.toggle("profile-page");
     // Specify how to clean up after this effect:
     return function cleanup() {
       if (navigator.platform.indexOf("Win") > -1) {
-        //ps.destroy();
         document.documentElement.className += " perfect-scrollbar-off";
         document.documentElement.classList.remove("perfect-scrollbar-on");
       }
@@ -122,7 +126,7 @@ export default function ProfilePage({match}) {
                     <img
                         alt={guildData.title}
                         className="img-center img-fluid rounded-circle"
-                        src={`https://github.com/near/ecosystem/blob/main${guildData.logo}?raw=true`}
+                        src={guildData.logo}
                       />  
                   </CardHeader>
                   <CardBody className="text-center">
@@ -140,48 +144,48 @@ export default function ProfilePage({match}) {
                     className="btn-icon btn-round"
                     color="twitter"
                     href={guildData.twitter}
-                    id="tooltip639225725"
+                    id="twitterTooltip"
                     target="_blank"
                   >
                     <i className="fab fa-twitter" />
                   </Button>
-                  <UncontrolledTooltip delay={0} target="tooltip639225725">
+                  <UncontrolledTooltip delay={0} target="twitterTooltip">
                     Follow us
                   </UncontrolledTooltip>
                   <Button
                     className="btn-icon btn-round"
                     color="telegram"
                     href={guildData.telegram}
-                    id="tooltip982846143"
+                    id="telegramTooltip"
                     target="_blank"
                   >
                     <i className="fab fa-telegram-plane" />
                   </Button>
-                  <UncontrolledTooltip delay={0} target="tooltip982846143">
+                  <UncontrolledTooltip delay={0} target="telegramTooltip">
                     Contact us
                   </UncontrolledTooltip>
                   <Button
                     className="btn-icon btn-round"
                     color="warning"
                     href={guildData.youtube}
-                    id="tooltip982846143"
+                    id="youtubeTooltip"
                     target="_blank"
                   >
                     <i className="fab fa-youtube" />
                   </Button>
-                  <UncontrolledTooltip delay={0} target="tooltip982846143">
+                  <UncontrolledTooltip delay={0} target="youtubeTooltip">
                     Like us
                   </UncontrolledTooltip>
                   <Button
                     className="btn-icon btn-round"
                     color="primary"
                     href={guildData.discord}
-                    id="tooltip951161185"
+                    id="discordTooltip"
                     target="_blank"
                   >
                     <i className="fab fa-discord" />
                   </Button>
-                  <UncontrolledTooltip delay={0} target="tooltip951161185">
+                  <UncontrolledTooltip delay={0} target="discordTooltip">
                     Talk to us
                   </UncontrolledTooltip>
 
@@ -190,12 +194,12 @@ export default function ProfilePage({match}) {
                     className="btn-icon btn-round"
                     color="dribbble"
                     href={guildData.website}
-                    id="tooltip951161185"
+                    id="websiteTooltip"
                     target="_blank"
                   >
                     <i className="fab fa-dribbble" />
                   </Button>
-                  <UncontrolledTooltip delay={0} target="tooltip951161185">
+                  <UncontrolledTooltip delay={0} target="websiteTooltip">
                     Follow us
                   </UncontrolledTooltip>
                 </div>
