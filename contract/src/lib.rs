@@ -125,7 +125,7 @@ impl GuildsPlatform {
     }
 
     pub fn get_guild_info(&self, slug: String) -> Guild {
-        let guild: Guild = self.guilds.get(&slug).unwrap().into();
+        let guild: Guild = self.guilds.get(&slug).unwrap_or_default().into();
 
         return guild
     }
@@ -134,7 +134,7 @@ impl GuildsPlatform {
 
         //TO DO: Control over joining? Can anyone join?
         //TO DO: On boarding of people with no account.
-        let mut guild: Guild = self.guilds.get(&slug).unwrap().into();
+        let mut guild: Guild = self.guilds.get(&slug).unwrap_or_default().into();
         let account_to_insert = env::predecessor_account_id();
         
         if guild.members.get(&account_to_insert).is_none() {
@@ -149,7 +149,7 @@ impl GuildsPlatform {
     }
 
     pub fn get_num_members(&self, slug: String) -> usize {
-        let guild: Guild = self.guilds.get(&slug).unwrap().into();
+        let guild: Guild = self.guilds.get(&slug).unwrap_or_default().into();
 
         guild.members.len()
     }
