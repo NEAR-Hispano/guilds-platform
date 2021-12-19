@@ -29,7 +29,8 @@ export async function initContract() {
       [
         'get_guild_info',
         'get_num_members',
-        'join_guild'
+        'join_guild',
+        'check_if_member'
       ],
   });
 }
