@@ -3,6 +3,7 @@ import {
     Button, 
     UncontrolledAlert
   } from "reactstrap";
+import { MAIN_GUILDS } from "variables/Constants";
 
   export default function JoinButton({guild}) {
     const [show, setShow] = React.useState(false);
@@ -51,17 +52,29 @@ import {
 
     return(
         <>
-        <Button
-            className="btn-round"
-            color="primary"
-            onClick={handleJoinUs}
-            disabled={loading}
-        > 
-        <i 
-            className={loading ? "tim-icons icon-refresh-02" : "tim-icons icon-tap-02"} 
-        />
-            {joinMsg}
-        </Button>
+        {
+            MAIN_GUILDS.includes(guild.slug) ? 
+            <Button
+                className="btn-round"
+                color="primary"
+                onClick={handleJoinUs}
+                disabled={loading}
+            > 
+                <i 
+                    className={loading ? "tim-icons icon-refresh-02" : "tim-icons icon-tap-02"} 
+                />
+                {joinMsg}
+            </Button> :
+            <Button
+                className="btn-round"
+                color="default"
+                disabled={true}
+            > 
+                <i className="tim-icons icon-spaceship" /> JOIN SOON
+            </Button>
+        }
+
+        
         <UncontrolledAlert  color="primary" isOpen={show} toggle={() => setShow(false)}>Please Login with your Near Account!</UncontrolledAlert >
         <UncontrolledAlert  color="default" isOpen={alreadyAlert} toggle={() => setAlreadyAlert(false)}>You are already a member of <strong>{guild.title}</strong></UncontrolledAlert >
         <UncontrolledAlert  color="success" isOpen={joinAlert} toggle={() => setJoinAlert(false)}>You've successfully joined <strong>{guild.title}!</strong></UncontrolledAlert >
