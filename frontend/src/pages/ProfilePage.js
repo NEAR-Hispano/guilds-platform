@@ -40,7 +40,7 @@ export default function ProfilePage({match}) {
   const [guildData, setGuild] = React.useState({});
   const [ joined, setJoined ] = React.useState(undefined);
 
-  const [numSubs, setNumSubs] = React.useState(0);
+  const [numSubs, setNumSubs] = React.useState('Loading...');
 
  
   //Getting state passed by link route
@@ -52,9 +52,9 @@ export default function ProfilePage({match}) {
       if(window.walletConnection.isSignedIn()){
           await window.contract.get_num_members({slug:match.params.slug || ''})
           .then(response => {
-              setNumSubs(response);
+            setNumSubs(`${response}`);
           }).catch(() => {
-              setNumSubs(0);
+              setNumSubs('0');
           });
       }        
   }
@@ -127,6 +127,12 @@ export default function ProfilePage({match}) {
                         alt={guildData.title}
                         className="img-center img-fluid rounded-circle"
                         src={guildData.logo}
+                        onError={ 
+                          (e)=>{
+                              e.target.onerror = null;
+                              e.target.src=require("assets/img/logo-nf.png").default
+                          }
+                       }
                       />  
                   </CardHeader>
                   <CardBody className="text-center">
@@ -215,7 +221,7 @@ export default function ProfilePage({match}) {
               <Col sm="4">
                 <Card  bg='primary' style={{ width: '25rem' }} className="mb-6">
                   <CardHeader>
-                    <h2>MEMBERS: <strong>{numSubs}</strong></h2>
+                    <h2>MEMBERS:&nbsp;&nbsp;<strong>{numSubs}</strong></h2>
                   </CardHeader>
                   <CardBody>
                     {
