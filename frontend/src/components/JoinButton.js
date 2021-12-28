@@ -5,7 +5,7 @@ import {
   } from "reactstrap";
 import { MAIN_GUILDS } from "variables/Constants";
 
-  export default function JoinButton({guild, setJoined, joined}) {
+export default function JoinButton({guild, setJoined, joined}) {
     const [show, setShow] = React.useState(false);
 
     const [loading, setLoading] = React.useState(false);
@@ -58,8 +58,8 @@ import { MAIN_GUILDS } from "variables/Constants";
                 disabled={loading}
             > 
                 <i 
-                    className={loading ? "tim-icons icon-refresh-02" : "tim-icons icon-tap-02"} 
-                />
+                    className={loading || joined==='JOINED' ? "tim-icons icon-tap-02" : "tim-icons icon-refresh-02"} 
+                /> &nbsp;
                 {joined}
             </Button> :
             <Button

@@ -69,13 +69,8 @@ export default function ProfilePage({match}) {
                 //If we are, we show this to the user
                 if(response){
                     setJoined("JOINED");
-                }
-                //Else, we try to join the guild
-                else{
-                    window.contract.join_guild({slug:match.params.slug || ''})
-                    .then(() => {
-                        setJoined("JOINED");
-                    })
+                } else {
+                  setJoined("JOIN US");
                 }
             })
             .catch(() => {
@@ -84,7 +79,6 @@ export default function ProfilePage({match}) {
         }
     }
   
-
     useEffect(() => {
         if (info) {
             localStorage.setItem('GUILD', JSON.stringify(info));
