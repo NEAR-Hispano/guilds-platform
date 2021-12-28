@@ -1,17 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
-  Button, 
   Col, 
   Card,
-  CardBody,
-  UncontrolledTooltip
+  CardBody
 
 } from "reactstrap";
 
-import JoinButton from './JoinButton'
+import JoinButton from './JoinButton';
+import SocialNetworks from './SocialNetworks';
 
-export default function GuildCard({guild}) {
+export default function GuildCard({guild}) { 
         
     return (
         <Col sm="3" key={`col-${guild.slug}`}>
@@ -37,47 +36,9 @@ export default function GuildCard({guild}) {
                     />  
                 </Link> 
                     <h4 className="title">{guild.title}</h4>
-                    {/*<p>{`${0} subscribers`}</p>*/}
-                    <Button
-                        className="btn-icon btn-round"
-                        color="twitter"
-                        href={guild.twitter}
-                        id="tooltip639225725"
-                        target="_blank"
-                    >
-                        <i className="fab fa-twitter" />
-                    </Button>
-                    <UncontrolledTooltip delay={0} target="tooltip639225725">
-                        Follow us
-                    </UncontrolledTooltip>
-                
-                    <Button
-                        className="btn-icon btn-round"
-                        color="warning"
-                        href={guild.youtube}
-                        id="tooltip982846143"
-                        target="_blank"
-                    >
-                        <i className="fab fa-youtube" />
-                    </Button>
-                    <UncontrolledTooltip delay={0} target="tooltip982846143">
-                        Like us
-                    </UncontrolledTooltip>                  
-                    <Button
-                        className="btn-icon btn-round"
-                        color="dribbble"
-                        href={guild.website}
-                        id="tooltip951161185"
-                        target="_blank"
-                    >
-                        <i className="fab fa-dribbble" />
-                    </Button>
-                    <UncontrolledTooltip delay={0} target="tooltip951161185">
-                        Follow us
-                    </UncontrolledTooltip>
                 </div>
                 <br/>
-                <JoinButton guild={guild}/>
+                {/*<JoinButton guild={guild}/>*/}
                 </CardBody>
             </Card>
                              

@@ -5,11 +5,10 @@ import {
   } from "reactstrap";
 import { MAIN_GUILDS } from "variables/Constants";
 
-  export default function JoinButton({guild}) {
+  export default function JoinButton({guild, setJoined, joined}) {
     const [show, setShow] = React.useState(false);
 
     const [loading, setLoading] = React.useState(false);
-    const [joinMsg, setJoinMsg] = React.useState("JOIN US")
 
     const [alreadyAlert, setAlreadyAlert] = React.useState(false);
     const [joinAlert, setJoinAlert] = React.useState(false);
@@ -19,9 +18,7 @@ import { MAIN_GUILDS } from "variables/Constants";
         setShow(!window.walletConnection.isSignedIn());
 
         if(window.walletConnection.isSignedIn()){
-            //We set the button to loading
-            setJoinMsg("Loading...")
-            setLoading(true)
+            setLoading(true);
 
             //First, we check if we are already a member of the guild
             window.contract.check_if_member({slug:guild.slug})
@@ -29,7 +26,7 @@ import { MAIN_GUILDS } from "variables/Constants";
                 //If we are, we show this to the user
                 if(response){
                     setAlreadyAlert(true)
-                    setJoinMsg("JOINED")
+                    setJoined("JOINED")
                     setLoading(false);
                 }
                 //Else, we try to join the guild
@@ -37,14 +34,14 @@ import { MAIN_GUILDS } from "variables/Constants";
                     window.contract.join_guild({slug:guild.slug || ''})
                     .then(() => {
                         setJoinAlert(true)
-                        setJoinMsg("JOINED")
+                        setJoined("JOINED")
                         setLoading(false);
                     })
                 }
             })
             .catch(() => {
                 setErrorAlert(true)
-                setJoinMsg("JOIN US")
+                setJoined("JOIN US")
                 setLoading(false)
             })
         } 
@@ -63,7 +60,7 @@ import { MAIN_GUILDS } from "variables/Constants";
                 <i 
                     className={loading ? "tim-icons icon-refresh-02" : "tim-icons icon-tap-02"} 
                 />
-                {joinMsg}
+                {joined}
             </Button> :
             <Button
                 className="btn-round"
