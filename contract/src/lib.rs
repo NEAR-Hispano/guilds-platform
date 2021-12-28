@@ -3,7 +3,6 @@ use near_sdk::{near_bindgen, env, setup_alloc, AccountId};
 use near_sdk::serde::{Serialize, Deserialize};
 use near_sdk::collections::UnorderedMap;
 use std::collections::HashSet;
-
 use std::convert::From;
 
 setup_alloc!();
@@ -184,12 +183,27 @@ impl GuildsPlatform {
             None => false,
         }
     }
+
+    pub fn get_member_list(&self, slug: String) -> HashSet<AccountId> {
+        let guild: Guild;
+        match self.guild_exists(&slug) {
+            true => {
+                guild = self.guilds.get(&slug).unwrap_or_default().into();
+                return guild.members;
+            },
+            false => {
+                let msg = format!("Guild {} does not exist", slug);
+                env::log(msg.as_bytes());
+                return HashSet::<AccountId>::new();
+            }
+        };
+    }
 }
 
 /// Returns an empty Guild
 /// TODO: Create a new "Constructor" trait?
 pub fn new_guild() -> Guild {
-    env::log(format!("Emplty guild created ").as_bytes());
+    env::log(format!("Emplty guild created").as_bytes());
     Guild {
         slug: String::from(""),
         title: String::from(""),
