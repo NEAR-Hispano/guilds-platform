@@ -23,14 +23,16 @@ export async function initContract() {
     // Initializing our contract APIs by contract name and configuration
     window.contract = await new Contract(window.walletConnection.account(), CONTRACT_NAME, {
         // View methods are read only. They don't modify the state, but usually return some value.
-        viewMethods: [],
+        viewMethods: [
+            'get_num_members'
+        ],
         // Change methods can modify the state. But you don't receive the returned value when called.
         changeMethods: 
             [
                 'get_guild_info',
-                'get_num_members',
                 'join_guild',
-                'check_if_member'
+                'check_if_member',
+                'get_guilds_by_user'
             ],
     });
 }

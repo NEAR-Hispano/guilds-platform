@@ -50,14 +50,12 @@ export default function ProfilePage({match}) {
 
     //Query to get guild subscribers amount
     const handleSubs = async() => {
-        if(window.walletConnection.isSignedIn()){
-            await window.contract.get_num_members({slug:match.params.slug || ''})
-            .then(response => {
-              setNumSubs(`${response}`);
-            }).catch(() => {
-                setNumSubs('0');
-            });
-        }        
+        await window.contract.get_num_members({slug:match.params.slug || ''})
+        .then(response => {
+            setNumSubs(`${response}`);
+        }).catch(() => {
+            setNumSubs('0');
+        });   
     }
 
     // If a member is joined at the Guild
@@ -76,6 +74,17 @@ export default function ProfilePage({match}) {
             .catch(() => {
                 setJoined("JOIN US");
             })
+
+
+            window.contract.get_guilds_by_user()
+            .then(response => {
+                console.log("RESPONSE GUILDS: ", response);
+            })
+            .catch((error) => {
+                console.log("ERROR GUILDS USERS: ", error);
+            });
+        } else {
+            setJoined("JOIN US");
         }
     }
   

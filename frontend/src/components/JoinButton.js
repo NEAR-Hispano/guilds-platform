@@ -19,30 +19,29 @@ export default function JoinButton({guild, setJoined, joined}) {
 
         if(window.walletConnection.isSignedIn()){
             setLoading(true);
-
             //First, we check if we are already a member of the guild
             window.contract.check_if_member({slug:guild.slug})
             .then(response => {
                 //If we are, we show this to the user
                 if(response){
-                    setAlreadyAlert(true)
-                    setJoined("JOINED")
+                    setAlreadyAlert(true);
+                    setJoined("JOINED");
                     setLoading(false);
                 }
                 //Else, we try to join the guild
                 else{
                     window.contract.join_guild({slug:guild.slug || ''})
                     .then(() => {
-                        setJoinAlert(true)
-                        setJoined("JOINED")
+                        setJoinAlert(true);
+                        setJoined("JOINED");
                         setLoading(false);
                     })
                 }
             })
             .catch(() => {
-                setErrorAlert(true)
-                setJoined("JOIN US")
-                setLoading(false)
+                setErrorAlert(true);
+                setJoined("JOIN US");
+                setLoading(false);
             })
         } 
     }
@@ -58,7 +57,7 @@ export default function JoinButton({guild, setJoined, joined}) {
                 disabled={loading}
             > 
                 <i 
-                    className={loading || joined==='JOINED' ? "tim-icons icon-tap-02" : "tim-icons icon-refresh-02"} 
+                    className={loading && joined==="Validating..." ? "tim-icons icon-refresh-02": "tim-icons icon-tap-02" } 
                 /> &nbsp;
                 {joined}
             </Button> :
