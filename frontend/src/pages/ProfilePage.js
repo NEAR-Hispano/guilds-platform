@@ -36,17 +36,36 @@ import Navigationbar from "components/Navigationbar.js";
 import Footer from "components/Footer.js";
 import JoinButton from '../components/JoinButton';
 import SocialNetworks from '../components/SocialNetworks';
+import { setJoinMsg } from "../utils";
 
 export default function ProfilePage({match}) {
     const [guildData, setGuild] = React.useState({});
-    const [ joined, setJoined ] = React.useState("Validating...");
-
+    const [guildsUser, setGuildsUser] = React.useState("Validating...");
     const [numSubs, setNumSubs] = React.useState('Loading...');
 
 
     //Getting state passed by link route
     const location = useLocation();
     const info = location.state?.guild;
+
+    const getGuildUser = async () => {
+        /* If member was joining a guild is successfully, 
+        * re-query all guilds by user to confirm that user has joined successfully
+        */
+        await window.contract.get_guilds_by_user()
+        .then((response) => {
+            setGuildsUser(response);
+        });
+    }
+
+    useEffect(() => {
+        if(location.state?.guildsUser) {
+            setGuildsUser(location.state.guildsUser);
+        } else {
+            getGuildUser();
+        }
+        
+    }, []);
 
     //Query to get guild subscribers amount
     const handleSubs = async() => {
@@ -56,36 +75,6 @@ export default function ProfilePage({match}) {
         }).catch(() => {
             setNumSubs('0');
         });   
-    }
-
-    // If a member is joined at the Guild
-    const handleMemberJoined = async() => {
-        if(window.walletConnection.isSignedIn()){
-            //First, we check if we are already a member of the guild
-            window.contract.check_if_member({slug:match.params.slug || ''})
-            .then(response => {
-                //If we are, we show this to the user
-                if(response){
-                    setJoined("JOINED");
-                } else {
-                  setJoined("JOIN US");
-                }
-            })
-            .catch(() => {
-                setJoined("JOIN US");
-            })
-
-
-            window.contract.get_guilds_by_user()
-            .then(response => {
-                console.log("RESPONSE GUILDS: ", response);
-            })
-            .catch((error) => {
-                console.log("ERROR GUILDS USERS: ", error);
-            });
-        } else {
-            setJoined("JOIN US");
-        }
     }
   
     useEffect(() => {
@@ -98,11 +87,6 @@ export default function ProfilePage({match}) {
     useEffect(() => {
         setGuild(info || JSON.parse(localStorage.getItem('GUILD')));
     }, [info]);
-
-
-    useEffect(() => {
-        handleMemberJoined();
-    }, []);
 
     useEffect(() => {
         handleSubs();
@@ -158,7 +142,10 @@ export default function ProfilePage({match}) {
                                           />  
                                     </CardHeader>
                                     <CardBody className="text-center">
-                                        <JoinButton guild={guildData} setJoined={setJoined} joined={joined}/>          
+                                    <   JoinButton 
+                                        guild={guildData} 
+                                        guildsUser={location.state?.guildsUser || guildsUser} 
+                                        setGuildsUser={setGuildsUser}/>          
                                     </CardBody>
                                 </Card>
                             </Col>
@@ -169,7 +156,10 @@ export default function ProfilePage({match}) {
                                     {guildData.oneliner}
                                 </p>
                                 <div className="btn-wrapper profile pt-3 text-left">
-                                    <SocialNetworks joined={joined} guild={guildData}/> 
+                                    <SocialNetworks 
+                                        joined={setJoinMsg(guildsUser, guildData.slug)} 
+                                        guild={guildData}
+                                    /> 
                                     <Button
                                         className="btn-icon btn-round"
                                         color="dribbble"
@@ -182,6 +172,7 @@ export default function ProfilePage({match}) {
                                     <UncontrolledTooltip delay={0} target="websiteTooltip">
                                         Visit us
                                     </UncontrolledTooltip>
+                                    
                                 </div>
                             </Col>
                         </Row>

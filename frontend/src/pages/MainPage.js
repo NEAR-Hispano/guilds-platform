@@ -23,11 +23,13 @@ import {
     PaginationLink,
     Row
 } from "reactstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function MainPage({guilds}) {
     const [loaded, setLoaded] = useState(true);
     const [currentPage, setCurrentPage ] = useState(0);
+    const [guildsUser, setGuildsUser] = useState('undefined');
+
     // Pagination variables
     const pageSize = 20;
     const pagesCount = Math.ceil(guilds.length/pageSize);
@@ -40,6 +42,24 @@ export default function MainPage({guilds}) {
       e.preventDefault();
       setCurrentPage(index);
     }
+    
+    const getGuildsByUser = async () => {
+        if (window.walletConnection.isSignedIn()) {
+            await window.contract.get_guilds_by_user()
+            .then(response => {
+                setGuildsUser(response);
+            })
+            .catch((error) => {
+                console.log("Error: ", error);
+                setGuildsUser([]);
+            });
+        }
+    }
+
+    useEffect(() => {
+        getGuildsByUser();
+        localStorage.setItem('GUILD_USER', guildsUser);
+    }, [])
 
     return (
         <div className="section section-examples" data-background-color="black">
@@ -63,7 +83,7 @@ export default function MainPage({guilds}) {
                         (currentPage + 1) * pageSize
                     )
                     .map((guild, i) => 
-                        <GuildCard key={`card-${guild.slug}`} guild={guild} />
+                        <GuildCard key={`card-${guild.slug}`} guild={guild} guildsUser={guildsUser} setGuildsUser={setGuildsUser}/>
                     )}
               </Row>
               <Pagination  listClassName="justify-content-center">

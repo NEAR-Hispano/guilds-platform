@@ -27,20 +27,22 @@ export async function initContract() {
             'get_num_members'
         ],
         // Change methods can modify the state. But you don't receive the returned value when called.
-        changeMethods: 
-            [
-                'get_guild_info',
-                'join_guild',
-                'check_if_member',
-                'get_guilds_by_user'
-            ],
+        changeMethods: [
+            'get_guild_info',
+            'join_guild',
+            'check_if_member',
+            'get_guilds_by_user',
+            'get_member_list'
+        ],
     });
 }
 
 export function logout() {
     window.walletConnection.signOut()
     // reload page
-    window.location.replace(window.location.origin + window.location.pathname)
+    window.location.replace(window.location.origin + window.location.pathname);
+    //Remove all information internal saved
+    localStorage.clear();
 }
 
 export function login() {

@@ -2,6 +2,7 @@ import {
     Button, 
     UncontrolledTooltip
 } from "reactstrap";
+import DownloadCsv from '../components/DownloadCsv';
   
 export default function SocialNetworks({joined, guild}) {
     const JOINED = 'JOINED';
@@ -62,6 +63,11 @@ export default function SocialNetworks({joined, guild}) {
                 <UncontrolledTooltip delay={0} target="discordTooltip">
                     Talk to us
                 </UncontrolledTooltip> </> }
+            {
+                (joined === JOINED) && <>
+                    <DownloadCsv slug={guild.slug}/>
+                </>
+            }
         </>
 
     );

@@ -67,58 +67,58 @@ export default function IndexNavbar() {
     };
 
     return (
-      <Navbar className={"fixed-top " + color} color-on-scroll="100" expand="lg">
-          <Container>
-              <div className="navbar-translate">
-                  <NavbarBrand to="/" tag={Link} id="navbar-brand">
-                      <span>NEAR • </span>
-                      GUILDS
-                  </NavbarBrand>
-                  <UncontrolledTooltip placement="bottom" target="navbar-brand">
-                      NEAR Guilds
-                  </UncontrolledTooltip>
-                  <button
-                      aria-expanded={collapseOpen}
-                      className="navbar-toggler navbar-toggler"
-                      onClick={toggleCollapse}
-                  >
-                      <span className="navbar-toggler-bar bar1" />
-                      <span className="navbar-toggler-bar bar2" />
-                      <span className="navbar-toggler-bar bar3" />
-                  </button>
-              </div>
-              <Collapse
-                  className={"justify-content-end " + collapseOut}
-                  navbar
-                  isOpen={collapseOpen}
-                  onExiting={onCollapseExiting}
-                  onExited={onCollapseExited}
-              >
-                  <div className="navbar-collapse-header">
-                      <Row>
-                          <Col className="collapse-brand" xs="6">
-                              <a href="#pablo" onClick={(e) => e.preventDefault()}>
-                                NEAR • GUILDS
-                              </a>
-                          </Col>
-                          <Col className="collapse-close text-right" xs="6">
-                              <button
-                                aria-expanded={collapseOpen}
-                                className="navbar-toggler"
-                                onClick={toggleCollapse}
-                              >
-                                  <i className="tim-icons icon-simple-remove" />
-                              </button>
-                          </Col>
-                      </Row>
-                  </div>
-                  <Nav navbar>
-                      <NavItem className="p-0">
-                          <SignInOutButton/>
-                      </NavItem>
-                  </Nav>
-              </Collapse>
-          </Container>
-      </Navbar>
+        <Navbar className={"fixed-top " + color} color-on-scroll="100" expand="lg">
+            <Container>
+                <div className="navbar-translate">
+                    <NavbarBrand to="/" tag={Link} id="navbar-brand">
+                        <span>NEAR • </span>
+                        GUILDS
+                    </NavbarBrand>
+                    <UncontrolledTooltip placement="bottom" target="navbar-brand">
+                        NEAR Guilds
+                    </UncontrolledTooltip>
+                    <button
+                        aria-expanded={collapseOpen}
+                        className="navbar-toggler"
+                        onClick={toggleCollapse}
+                    >
+                        <span className="navbar-toggler-bar bar1" />
+                        <span className="navbar-toggler-bar bar2" />
+                        <span className="navbar-toggler-bar bar3" />
+                    </button>
+                </div>
+                <Collapse
+                    className={"justify-content-end " + collapseOut}
+                    navbar
+                    isOpen={collapseOpen}
+                    onExiting={onCollapseExiting}
+                    onExited={onCollapseExited}
+                >
+                    <div className="navbar-collapse-header">
+                        <Row>
+                            <Col className="collapse-brand" xs="6">
+                                <a href="#pablo" onClick={(e) => e.preventDefault()}>
+                                    NEAR • GUILDS
+                                </a>
+                            </Col>
+                            <Col className="collapse-close text-right" xs="6">
+                                <button
+                                    aria-expanded={collapseOpen}
+                                    className="navbar-toggler"
+                                    onClick={toggleCollapse}
+                                >
+                                    <i className="tim-icons icon-simple-remove" />
+                                </button>
+                            </Col>
+                        </Row>
+                    </div>
+                    <Nav navbar>
+                        <NavItem className="p-0">
+                            <SignInOutButton/>
+                        </NavItem>
+                    </Nav>
+                </Collapse>
+            </Container>
+        </Navbar>
     );
 }
