@@ -21,6 +21,7 @@ export default function SignInOutButton () {
                 </Button>
             </NavLink>
         ):
+        (
             <NavLink
                 data-placement="bottom"
                 rel="noopener noreferrer"
@@ -39,5 +40,6 @@ export default function SignInOutButton () {
                    
                 </Button>
             </NavLink>
+        )
     )
 }

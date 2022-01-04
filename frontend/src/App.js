@@ -27,56 +27,55 @@ import { GuildsEntities, getMainGuilds, getMoreGuilds } from 'services/GuildsEnt
 
 
 export default function App() {
-  const [fullData, setFullData] = useState([]);
-  const [mainGuilds, setMainGuilds] = useState([]);
-  const [moreGuilds, setMoreGuilds] = useState([]);
+    const [fullData, setFullData] = useState([]);
+    const [mainGuilds, setMainGuilds] = useState([]);
+    const [moreGuilds, setMoreGuilds] = useState([]);
 
-  const handleMapGuilds =  async() => {
-    //Get Guilds information
-    const response = await GuildsEntities();
-    setFullData(response);
-  }; 
+    const handleMapGuilds =  async() => {
+        //Get Guilds information
+        const response = await GuildsEntities();
+        setFullData(response);
+    }; 
 
-  useEffect(() => {
-    // Call method to load all guilds data
-    handleMapGuilds();
-  }, [] );
+    useEffect(() => {
+        // Call method to load all guilds data
+        handleMapGuilds();
+    }, [] );
 
-  const handleMapMainGuilds = () => {
-    //Extract the main guilds needed to be on top list
-    const response = getMainGuilds(fullData);
-    setMainGuilds(response);
-  }
+    const handleMapMainGuilds = () => {
+        //Extract the main guilds needed to be on top list
+        const response = getMainGuilds(fullData);
+        setMainGuilds(response);
+    }
 
-  const handleMapOtherGuilds = () => {
-    //Extract the other guilds on the list
-    const response = getMoreGuilds(fullData);
-    setMoreGuilds(response);
-  }
+    const handleMapOtherGuilds = () => {
+        //Extract the other guilds on the list
+        const response = getMoreGuilds(fullData);
+        setMoreGuilds(response);
+    }
 
 
-  useEffect(() => {
-    handleMapMainGuilds();
-    handleMapOtherGuilds();
-    document.body.classList.toggle("index-page");
-    // Specify how to clean up after this effect:
-    return function cleanup() {
-      document.body.classList.toggle("index-page");
-    };
+    useEffect(() => {
+        handleMapMainGuilds();
+        handleMapOtherGuilds();
+        document.body.classList.toggle("index-page");
+        // Specify how to clean up after this effect:
+        return function cleanup() {
+            document.body.classList.toggle("index-page");
+        };
+    }, [ fullData ]);
     
-  }, [ fullData ]);
-  
-  return (
-    <>
-      <IndexNavbar />
-      <div className="wrapper">
-        <PageHeader />
-        <div className="main">
-          <MainPage guilds={[...mainGuilds, ...moreGuilds]} />
-          {/* <MainPage guilds={[...mainGuilds, ...moreGuilds]} />  */}
-        </div>
-        <Footer />
-      </div>
-    </>
-  );
+    return (
+        <>
+            <IndexNavbar />
+            <div className="wrapper">
+                <PageHeader />
+                <div className="main">
+                    <MainPage guilds={[...mainGuilds, ...moreGuilds]} />
+                    {/* <MainPage guilds={[...mainGuilds, ...moreGuilds]} />  */}
+                </div>
+                <Footer />
+            </div>
+        </>
+    );
 }
