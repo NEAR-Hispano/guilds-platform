@@ -11,6 +11,7 @@ setup_alloc!();
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct GuildsPlatform {
     guilds: UnorderedMap<String, UpgradableGuild>,
+    users: UnorderedMap<AccountId, HashSet<String>>
 }
 
 //Initializing the contract
@@ -18,6 +19,7 @@ impl Default for GuildsPlatform {
     fn default() -> Self {
       Self {
         guilds: UnorderedMap::new(b"g".to_vec()),
+        users: UnorderedMap::new(b"u".to_vec())
       }
     }
   }
@@ -139,6 +141,25 @@ impl GuildsPlatform {
         if guild.members.get(&account_to_insert).is_none() {
             guild.members.insert(account_to_insert);
             self.guilds.insert(&slug,&UpgradableGuild::CurrentVersion(guild));
+            
+            //PROPOSAL: User methods
+            //We check if the register of the user already exists. 
+            //If it does, we insert the new guild. 
+            //if it doesn't, we create the registry and add that guild to the list.
+            let mut user_list: HashSet<AccountId>;
+            match self.check_if_user(){
+                true => {
+                    user_list = self.users.get(&env::predecessor_account_id()).unwrap_or_default();
+                },
+                false => {
+                    user_list = HashSet::new();
+                }
+            };
+
+            user_list.insert(slug.to_string());
+            self.users.insert(&env::predecessor_account_id(),&user_list);
+            //PROPOSAL ENDS
+
             env::log(format!("'{}' just joined '{}'!", env::predecessor_account_id(), &slug,).as_bytes());
         }
         else{
@@ -197,6 +218,32 @@ impl GuildsPlatform {
                 return HashSet::<AccountId>::new();
             }
         };
+    }
+
+    //PROPOSAL: Methods for users and guild list by user
+    
+    //Checks if the current user is already registered in our platform
+    pub fn check_if_user(&self) -> bool {
+        match self.users.get(&env::predecessor_account_id()) {
+            Some(_user) => true,
+            None => {
+                let msg = format!("User {} is not part of any guild.", env::predecessor_account_id());
+                env::log(msg.as_bytes());
+                false
+            },
+        }
+    }
+
+    //Gets the list of guilds a user is part of
+    pub fn get_guilds_by_user(&self) -> HashSet<String> {
+        match self.check_if_user() {
+            true => {
+                self.users.get(&env::predecessor_account_id()).unwrap_or_default()
+            },
+            false => {
+                HashSet::<String>::new()
+            },
+        }
     }
 }
 
