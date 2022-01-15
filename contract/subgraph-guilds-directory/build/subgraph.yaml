@@ -1,0 +1,21 @@
+specVersion: 0.0.4
+description: Guilds
+repository: https://github.com/zinhunter/graph-tests.git
+schema:
+  file: schema.graphql
+dataSources:
+  - kind: near
+    name: receipts
+    network: near-testnet
+    source:
+      account: v3.guilds_tests.testnet
+      startBlock: 76803495
+    mapping:
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: receipts/receipts.wasm
+      entities:
+        - Member
+        - Guild
+      receiptHandlers:
+        - handler: handleReceipt
