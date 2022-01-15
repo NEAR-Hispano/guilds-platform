@@ -1,18 +1,18 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { 
-  Button, 
-  Col, 
-  Card,
-  CardBody,
-  UncontrolledTooltip
-
+    Button,
+    Col, 
+    Card,
+    CardBody,
+    UncontrolledTooltip
 } from "reactstrap";
 
-import JoinButton from './JoinButton'
+import JoinButton from './JoinButton';
+import SocialNetworks from './SocialNetworks';
+import { setJoinMsg } from "../utils";
 
-export default function GuildCard({guild}) {
-        
+export default function GuildCard({guild, guildsUser, setGuildsUser}) { 
     return (
         <Col sm="3" key={`col-${guild.slug}`}>
             
@@ -21,7 +21,7 @@ export default function GuildCard({guild}) {
                 
                 <div className="btn-wrapper profile pt-3">
                 {/*  Passing props through Link’s state */}
-                <Link to={{pathname: `profile-page/${guild.slug}`, state:{guild}}}>
+                <Link to={{pathname: `profile-page/${guild.slug}`, state:{guild, guildsUser}}}>
                     <img
                         alt={guild.title}
                         className="img-center img-fluid"
@@ -37,47 +37,24 @@ export default function GuildCard({guild}) {
                     />  
                 </Link> 
                     <h4 className="title">{guild.title}</h4>
-                    {/*<p>{`${0} subscribers`}</p>*/}
-                    <Button
-                        className="btn-icon btn-round"
-                        color="twitter"
-                        href={guild.twitter}
-                        id="tooltip639225725"
-                        target="_blank"
-                    >
-                        <i className="fab fa-twitter" />
-                    </Button>
-                    <UncontrolledTooltip delay={0} target="tooltip639225725">
-                        Follow us
-                    </UncontrolledTooltip>
+                </div>
                 
-                    <Button
-                        className="btn-icon btn-round"
-                        color="warning"
-                        href={guild.youtube}
-                        id="tooltip982846143"
-                        target="_blank"
-                    >
-                        <i className="fab fa-youtube" />
-                    </Button>
-                    <UncontrolledTooltip delay={0} target="tooltip982846143">
-                        Like us
-                    </UncontrolledTooltip>                  
+                <div className="btn-wrapper profile pt-1 text-center">
+                    <SocialNetworks joined={setJoinMsg(guildsUser, guild.slug)} guild={guild}/> 
                     <Button
                         className="btn-icon btn-round"
                         color="dribbble"
                         href={guild.website}
-                        id="tooltip951161185"
+                        id="websiteTooltip"
                         target="_blank"
                     >
                         <i className="fab fa-dribbble" />
                     </Button>
-                    <UncontrolledTooltip delay={0} target="tooltip951161185">
-                        Follow us
+                    <UncontrolledTooltip delay={0} target="websiteTooltip">
+                        Visit us
                     </UncontrolledTooltip>
                 </div>
-                <br/>
-                <JoinButton guild={guild}/>
+                <JoinButton guild={guild} guildsUser={guildsUser || []} setGuildsUser={setGuildsUser}/>
                 </CardBody>
             </Card>
                              
