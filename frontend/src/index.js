@@ -28,22 +28,22 @@ import ProfilePage from "pages/ProfilePage.js";
 
 
 window.nearInitPromise = initContract()
-  .then(() => {
-    ReactDOM.render(
-        <HashRouter>
-          <Switch>
-            <Route path="/guilds" render={(props) => <App {...props} />} />
-            <Route
-              path="/profile-page/:slug"
-              render={(props) => <ProfilePage {...props} />}
-            />
-            <Redirect from="/" to="/guilds" />
-          </Switch>
-        </HashRouter>
-    ,
-    document.getElementById("root")
-    )
-  })
-  .catch(console.error)
+    .then(() => {
+        ReactDOM.render(
+            <HashRouter>
+                <Switch>
+                    <Route path="/guilds" render={(props) => <App {...props} />} />
+                    <Route
+                        path="/profile-page/:slug"
+                        render={(props) => <ProfilePage {...props} />}
+                    />
+                    <Redirect from="/" to="/guilds" />
+                </Switch>
+            </HashRouter>,
+            document.getElementById("root")
+        )
+    }
+)
+.catch(console.error)
 
 

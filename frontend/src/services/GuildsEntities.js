@@ -42,7 +42,7 @@ export const GuildsEntities = () => {
                     medium: data.medium,
                     github: data.github,
                     ticker: data.ticker,
-                    logo: `https://github.com/near/ecosystem/blob/main${data.logo}?raw=true`,
+                    logo: getValidateURLLogo(data.logo),
                     category: data.category,
                     status: data.status,
                     contract: data.contract
@@ -56,6 +56,25 @@ export const GuildsEntities = () => {
             
         }
     );
+}
+
+const getValidateURLLogo = (urlLogo) => {
+    //Return default logo when this is not
+    if(!urlLogo){
+        return require("assets/img/logo-nf.png").default;
+    }
+
+    //Remove spaces contained before and after the text
+    const urlWOSpaces = urlLogo?.trim();
+    if(urlWOSpaces.startsWith('/img')){
+        return `https://github.com/near/ecosystem/blob/main${urlWOSpaces}?raw=true`;
+    } else if(urlWOSpaces.startsWith('img')){
+        //Adding a slash sign that is missing for the route
+        return `https://github.com/near/ecosystem/blob/main/${urlWOSpaces}?raw=true`;;
+    } else {
+        //Return the same url entered
+        return urlWOSpaces;
+    }
 }
 
 export const getMainGuilds = (data) => {

@@ -1,0 +1,21 @@
+specVersion: 0.0.4
+description: Guilds # the name of the subgraph
+repository: https://github.com/zinhunter/graph-tests.git # repo where subgraph project is stored
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: near
+    name: receipts # could also be blocks
+    network: near-testnet
+    source:
+      account: v3.guilds_tests.testnet # contract account you want to pull data from
+      startBlock: 76803495 # starting block on near-mainnet for indexing
+    mapping:
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - Member
+        - Guild
+      receiptHandlers:
+        - handler: handleReceipt # name of the receipt handler

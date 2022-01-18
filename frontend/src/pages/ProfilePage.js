@@ -21,233 +21,178 @@ import { useLocation } from "react-router-dom"
 //import PerfectScrollbar from "perfect-scrollbar";
 // reactstrap components
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  Container,
-  Row,
-  Col,
-  UncontrolledTooltip
+    Button,
+    Card,
+    CardHeader,
+    CardBody,
+    Container,
+    Row,
+    Col,
+    UncontrolledTooltip
 } from "reactstrap";
 
 // core components
 import Navigationbar from "components/Navigationbar.js";
 import Footer from "components/Footer.js";
-import JoinButton from '../components/JoinButton'
+import JoinButton from '../components/JoinButton';
+import SocialNetworks from '../components/SocialNetworks';
+import { setJoinMsg } from "../utils";
 
 export default function ProfilePage({match}) {
-  const [guildData, setGuild] = React.useState({});
-  const [ joined, setJoined ] = React.useState(undefined);
-
-  const [numSubs, setNumSubs] = React.useState(0);
-
- 
-  //Getting state passed by link route
-  const location = useLocation();
-  const info = location.state?.guild;
-
-  //Query to get guild subscribers amount
-  const handleSubs = async() => {
-      if(window.walletConnection.isSignedIn()){
-          await window.contract.get_num_members({slug:match.params.slug || ''})
-          .then(response => {
-              setNumSubs(response);
-          }).catch(() => {
-              setNumSubs(0);
-          });
-      }        
-  }
-
-  useEffect(() => {
-    if (info) {
-      localStorage.setItem('GUILD', JSON.stringify(info));
-    }    
-    
-  }, [info]);
-
-  useEffect(() => {
-    setGuild(info || JSON.parse(localStorage.getItem('GUILD')));
-  }, [info]);
+    const [guildData, setGuild] = React.useState({});
+    const [guildsUser, setGuildsUser] = React.useState("Validating...");
+    const [numSubs, setNumSubs] = React.useState('Loading...');
 
 
-  useEffect(() => {
-    handleSubs();
-  }, []);
-  
- 
-  const handleJoinUs = async () => {
-    if(window.walletConnection.isSignedIn()){
-        await window.contract.join_guild({slug:match.params.slug || ''})
-        .then(response => {
-            setJoined(response);
-        }).catch(error => {
-            setJoined(undefined);
-        });   
-    }  
-}
+    //Getting state passed by link route
+    const location = useLocation();
+    const info = location.state?.guild;
 
-  useEffect(() => {       
-    if (navigator.platform.indexOf("Win") > -1) {
-      document.documentElement.className += " perfect-scrollbar-on";
-      document.documentElement.classList.remove("perfect-scrollbar-off");
+    const getGuildUser = async () => {
+        /* If member was joining a guild is successfully, 
+        * re-query all guilds by user to confirm that user has joined successfully
+        */
+        await window.contract.get_guilds_by_user()
+        .then((response) => {
+            setGuildsUser(response);
+        });
     }
-    document.body.classList.toggle("profile-page");
-    // Specify how to clean up after this effect:
-    return function cleanup() {
-      if (navigator.platform.indexOf("Win") > -1) {
-        document.documentElement.className += " perfect-scrollbar-off";
-        document.documentElement.classList.remove("perfect-scrollbar-on");
-      }
-      document.body.classList.toggle("profile-page");
-    };
-  }, [match.params.slug]);
 
-  return (
-    <>
-      <Navigationbar />
-      <div className="wrapper">
-        <div className="page-header">
-          <img
-            alt="..."
-            className="dots"
-            src={require("assets/img/dots.png").default}
-          />
-          <img
-            alt="..."
-            className="path"
-            src={require("assets/img/path4.png").default}
-          />
-          <Container className="align-items-center">
-            <Row>
-              <Col className="ml-auto mr-auto" lg="4" md="6">
-                <Card className="card-plain">
-                  <CardHeader>
+    useEffect(() => {
+        if(location.state?.guildsUser) {
+            setGuildsUser(location.state.guildsUser);
+        } else {
+            getGuildUser();
+        }
+        
+    }, []);
+
+    //Query to get guild subscribers amount
+    const handleSubs = async() => {
+        await window.contract.get_num_members({slug:match.params.slug || ''})
+        .then(response => {
+            setNumSubs(`${response}`);
+        }).catch(() => {
+            setNumSubs('0');
+        });   
+    }
+  
+    useEffect(() => {
+        if (info) {
+            localStorage.setItem('GUILD', JSON.stringify(info));
+        }    
+      
+    }, [info]);
+
+    useEffect(() => {
+        setGuild(info || JSON.parse(localStorage.getItem('GUILD')));
+    }, [info]);
+
+    useEffect(() => {
+        handleSubs();
+    }, []);
+    
+
+    useEffect(() => {       
+        if (navigator.platform.indexOf("Win") > -1) {
+            document.documentElement.className += " perfect-scrollbar-on";
+            document.documentElement.classList.remove("perfect-scrollbar-off");
+        }
+        document.body.classList.toggle("profile-page");
+        // Specify how to clean up after this effect:
+        return function cleanup() {
+            if (navigator.platform.indexOf("Win") > -1) {
+                document.documentElement.className += " perfect-scrollbar-off";
+                document.documentElement.classList.remove("perfect-scrollbar-on");
+            }
+            document.body.classList.toggle("profile-page");
+        };
+    }, [match.params.slug]);
+
+    return (
+        <>
+            <Navigationbar />
+            <div className="wrapper">
+                <div className="page-header">
                     <img
-                        alt={guildData.title}
-                        className="img-center img-fluid rounded-circle"
-                        src={guildData.logo}
-                      />  
-                  </CardHeader>
-                  <CardBody className="text-center">
-                    <JoinButton guild={guildData}/>          
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col lg="6" md="6">
-                <h6 className="text-on-back">{guildData.title}</h6>
-                <p className="profile-description">
-                  {guildData.description || guildData.oneliner}
-                </p>
-                <div className="btn-wrapper profile pt-3 text-right">
-                  <Button
-                    className="btn-icon btn-round"
-                    color="twitter"
-                    href={guildData.twitter}
-                    id="twitterTooltip"
-                    target="_blank"
-                  >
-                    <i className="fab fa-twitter" />
-                  </Button>
-                  <UncontrolledTooltip delay={0} target="twitterTooltip">
-                    Follow us
-                  </UncontrolledTooltip>
-                  <Button
-                    className="btn-icon btn-round"
-                    color="telegram"
-                    href={guildData.telegram}
-                    id="telegramTooltip"
-                    target="_blank"
-                  >
-                    <i className="fab fa-telegram-plane" />
-                  </Button>
-                  <UncontrolledTooltip delay={0} target="telegramTooltip">
-                    Contact us
-                  </UncontrolledTooltip>
-                  <Button
-                    className="btn-icon btn-round"
-                    color="warning"
-                    href={guildData.youtube}
-                    id="youtubeTooltip"
-                    target="_blank"
-                  >
-                    <i className="fab fa-youtube" />
-                  </Button>
-                  <UncontrolledTooltip delay={0} target="youtubeTooltip">
-                    Like us
-                  </UncontrolledTooltip>
-                  <Button
-                    className="btn-icon btn-round"
-                    color="primary"
-                    href={guildData.discord}
-                    id="discordTooltip"
-                    target="_blank"
-                  >
-                    <i className="fab fa-discord" />
-                  </Button>
-                  <UncontrolledTooltip delay={0} target="discordTooltip">
-                    Talk to us
-                  </UncontrolledTooltip>
-
-                  
-                  <Button
-                    className="btn-icon btn-round"
-                    color="dribbble"
-                    href={guildData.website}
-                    id="websiteTooltip"
-                    target="_blank"
-                  >
-                    <i className="fab fa-dribbble" />
-                  </Button>
-                  <UncontrolledTooltip delay={0} target="websiteTooltip">
-                    Follow us
-                  </UncontrolledTooltip>
-                </div>
-              </Col>
-              
-            </Row>
-          </Container>
-        </div>
-        <div className="section">
-          <Container>
-            <Row>
-              
-              <Col sm="4">
-                <Card  bg='primary' style={{ width: '25rem' }} className="mb-6">
-                  <CardHeader>
-                    <h2>MEMBERS: <strong>{numSubs}</strong></h2>
-                  </CardHeader>
-                  <CardBody>
-                    {
-                      !joined ? '' :
-                       Array(joined).fill('').map((member, index) =>{
-                        return(
-                          <>
-                          <Button
-                              className="btn-icon btn-round"
-                              color="twitter"
-                              href={`${member}.near`}
-                              id={`tooltip63922573${index}`}
-                              target="_blank"
-                          >
-                              <i className="tim-icons icon-single-02" />
-                          </Button>
-                          <UncontrolledTooltip delay={0} target={`tooltip63922573${index}`}>
-                              {member}
-                          </UncontrolledTooltip>
-                          </>
-                        )
-                      })
-                    }
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
-
-          </Container>
-        </div>       
-        <Footer />
-      </div>
-    </>
-  );
+                        alt="..."
+                        className="dots"
+                        src={require("assets/img/dots.png").default}
+                    />
+                    <img
+                        alt="..."
+                        className="path"
+                        src={require("assets/img/path4.png").default}
+                    />
+                    <Container className="align-items-center">
+                        <Row>
+                            <Col className="ml-auto mr-auto" lg="4" md="6">
+                                <Card className="card-plain">
+                                    <CardHeader>
+                                        <img
+                                            alt={guildData.title}
+                                            className="img-center img-fluid rounded-circle"
+                                            src={guildData.logo}
+                                            onError={ 
+                                                (e)=>{
+                                                    e.target.onerror = null;
+                                                    e.target.src=require("assets/img/logo-nf.png").default
+                                                }
+                                          }
+                                          />  
+                                    </CardHeader>
+                                    <CardBody className="text-center">
+                                    <   JoinButton 
+                                        guild={guildData} 
+                                        guildsUser={location.state?.guildsUser || guildsUser} 
+                                        setGuildsUser={setGuildsUser}/>          
+                                    </CardBody>
+                                </Card>
+                            </Col>
+                            <Col lg="6" md="6" style={{margin: "auto"}}>
+                                <h6 className="text-on-back">{guildData.title}</h6>
+                                <br/>
+                                <p className="profile-description">
+                                    {guildData.oneliner}
+                                </p>
+                                <div className="btn-wrapper profile pt-3 text-left">
+                                    <SocialNetworks 
+                                        joined={setJoinMsg(guildsUser, guildData.slug)} 
+                                        guild={guildData}
+                                    /> 
+                                    <Button
+                                        className="btn-icon btn-round"
+                                        color="dribbble"
+                                        href={guildData.website}
+                                        id="websiteTooltip"
+                                        target="_blank"
+                                    >
+                                        <i className="fab fa-dribbble" />
+                                    </Button>
+                                    <UncontrolledTooltip delay={0} target="websiteTooltip">
+                                        Visit us
+                                    </UncontrolledTooltip>
+                                    
+                                </div>
+                            </Col>
+                        </Row>
+                    </Container>
+                  </div>
+                  <div className="section">
+                      <Container>
+                          <Row>
+                              <Col sm="6">
+                                  <Card  bg='primary' style={{ width: '25rem' }} className="mb-6">
+                                      <CardHeader>
+                                          <h2>MEMBERS:&nbsp;&nbsp;<strong>{numSubs}</strong></h2>
+                                      </CardHeader>
+                                  </Card>
+                              </Col>
+                          </Row>
+                      </Container>
+                  </div>       
+                  <Footer />
+            </div>
+        </>
+    );
 }
