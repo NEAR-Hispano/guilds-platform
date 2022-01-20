@@ -59,7 +59,7 @@ export default function Footer() {
                                 </NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink to="/profile-page" tag={Link}>
+                                <NavLink to="/detail" tag={Link}>
                                     Profile
                                 </NavLink>
                             </NavItem>

@@ -1,4 +1,3 @@
-
 export const setJoinMsg = (guildsUser, slug) => {
     let message = '';
     if(!guildsUser){

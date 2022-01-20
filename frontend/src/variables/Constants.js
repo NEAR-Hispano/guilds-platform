@@ -18,8 +18,9 @@ export const UI_TAGS = [
 export const MAIN_GUILDS = [
     "near-music-guild",
     "near-vietnam",
-    "nearru",
+    "near-ru",
     "human-guild",
     "open-web-sandbox",
-    "open-shards-alliance"
+    "open-shards-alliance",
+    "near-hispano"
 ];

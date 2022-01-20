@@ -30,14 +30,12 @@
     }
 
     .squares{
-      animation: move-left-right 1s infinite;
       @include linear-gradient($primary-states, $primary);
       position: absolute;
       transition: 0.5s ease-out;
       overflow: hidden;
       border-radius: 20%;
       &.square1{
-        animation: move-left-right 4s infinite;
         height: 300px;
         width: 300px;
         opacity: 0.5;
@@ -46,7 +44,6 @@
       }
 
       &.square2{
-        animation: move-left-right 6s infinite;
         height: 400px;
         width: 400px;
         opacity: 0.4;
@@ -55,7 +52,6 @@
       }
 
       &.square3{
-        animation: move-left-right 5s infinite;
         height: 200px;
         width: 200px;
         opacity: 0.1;
@@ -64,16 +60,14 @@
       }
 
       &.square4{
-        animation: move-left-right 10s infinite;
         height: 100px;
         width: 100px;
-        opacity: 0.9;
+        opacity: 0.2;
         right: 27%;
         top: 70%;
       }
 
       &.square5{
-        animation: move-left-right 6s infinite;
         height: 250px;
         width: 250px;
         opacity: 0.1;
@@ -82,7 +76,6 @@
       }
 
       &.square6{
-        animation: move-left-right 9s infinite;
         left: 10%;
         top: 35%;
         height: 80px;
@@ -91,7 +84,6 @@
       }
 
       &.square7{
-        animation: move-left-right 3s infinite;
         width: 300px;
         height: 300px;
         right: -5%;
