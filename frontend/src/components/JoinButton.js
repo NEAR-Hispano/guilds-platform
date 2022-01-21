@@ -1,20 +1,20 @@
 import React, { useEffect } from "react";
 import { 
-    Button, 
-    UncontrolledAlert
+    Button,
+    Col,
+    UncontrolledAlert, 
   } from "reactstrap";
 import { MAIN_GUILDS } from "variables/Constants";
-import { setJoinMsg } from "../utils";
 import { login } from '../services/NearRCP';
 
 
-export default function JoinButton({guild, guildsUser, setGuildsUser}) {  
+export default function JoinButton({guild, guildsUser, setGuildsUser, setNumSubs, btnSize}) {  
     const [show, setShow] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
     const [alreadyAlert, setAlreadyAlert] = React.useState(false);
     const [joinAlert, setJoinAlert] = React.useState(false);
     const [errorAlert, setErrorAlert] = React.useState(false);
-    const [msgJoin, setMsgJoin] = React.useState(undefined);
+    const [msgJoin, setMsgJoin] = React.useState("Validating...");
 
 
     
@@ -24,6 +24,7 @@ export default function JoinButton({guild, guildsUser, setGuildsUser}) {
 
         if(window.walletConnection.isSignedIn()){
             setLoading(true);
+            setMsgJoin("Loading...")
             //If we are, we show this to the user
             if(guildsUser.includes(guild.slug)){
                 setAlreadyAlert(true);
@@ -42,56 +43,86 @@ export default function JoinButton({guild, guildsUser, setGuildsUser}) {
                         setJoinAlert(true);
                         setGuildsUser(response);
                         setLoading(false);
-                        setMsgJoin(setJoinMsg(response, guild.slug));
+                        response.includes(guild.slug) ? setMsgJoin("JOINED") : setMsgJoin("JOIN US")
+
+                        //To recalculate the number of subs
+                        //ONLY if the set function was sent
+                        if(setNumSubs !== null){
+                            window.contract.get_num_members({slug:guild.slug})
+                            .then(response => {
+                                setNumSubs(response)
+                            })
+                        }
                     });
                 })
             }
-        } 
+        } else {
+            login();
+        }
     }
 
     useEffect(() => {
-        const message = setJoinMsg(guildsUser, guild.slug);
-        setMsgJoin(message);
+        if(window.walletConnection.isSignedIn()){
+            if(typeof guildsUser == 'object'){
+            
+                if(guildsUser.includes(guild.slug)){
+                    setMsgJoin("JOINED")
+                }
+                else{
+                    setMsgJoin("JOIN US")
+                }
+                setLoading(false)
+            }
+        }
+        else{
+            setLoading(false)
+            setMsgJoin("JOIN US")
+        }
     }, [ guildsUser, guild.slug ]);
 
     return(
         <>
-        {
-            MAIN_GUILDS.includes(guild.slug) ? 
-            <Button
-                className="btn-round"
-                color={(msgJoin ==="JOINED") ? "warning" : "primary"}
-                onClick={handleJoinUs}
-                disabled={loading}
-            > 
-                <i 
-                    className={loading ? "tim-icons icon-refresh-02": "tim-icons icon-tap-02" } 
-                /> &nbsp;
-                { msgJoin}
-            </Button> :
-            <Button
-                className="btn-round"
-                color="default"
-                disabled={true}
-            > 
-                <i className="tim-icons icon-spaceship" /> JOIN SOON
-            </Button>
-        }
-
-        
-        <UncontrolledAlert  
-            color="primary" 
-            isOpen={show} 
-            toggle={
-                () => { 
-                    setShow(false);
-                    login();
+            <Col className="align-items-right">
+                {
+                    MAIN_GUILDS.includes(guild.slug) ? 
+                    <Button
+                        className="btn-round"
+                        color={(msgJoin ==="JOINED") ? "success" : "warning"}
+                        onClick={handleJoinUs}
+                        size={btnSize}
+                        disabled={(msgJoin ==="JOINED")}
+                    > 
+                        <i 
+                            className={loading ? "tim-icons icon-refresh-02": 
+                            ((msgJoin === "JOINED") ? "tim-icons icon-check-2" : "tim-icons icon-tap-02") } 
+                        /> &nbsp;
+                        { msgJoin}
+                    </Button> :
+                    <Button
+                        className="btn-simple"
+                        color={(msgJoin ==="JOINED") ? "success" : "warning"}
+                        size={btnSize}
+                        disabled={true}
+                    > 
+                        <i className="tim-icons icon-spaceship" /> JOIN SOON
+                    </Button>
+                    
                 }
-            }
-        > Please Login with your Near Account! </UncontrolledAlert >
-        <UncontrolledAlert  color="default" isOpen={alreadyAlert} toggle={() => setAlreadyAlert(false)}>You are already a member of <strong>{guild.title}</strong></UncontrolledAlert >
-        <UncontrolledAlert  color="success" isOpen={joinAlert} toggle={() => setJoinAlert(false)}>You've successfully joined <strong>{guild.title}!</strong></UncontrolledAlert >
-        <UncontrolledAlert  color="warning" isOpen={errorAlert} toggle={() => setErrorAlert(false)}>There was an error while processing your request.</UncontrolledAlert >
+            </Col>
+            <Col className="d-flex align-items-left" sm="8">
+                <UncontrolledAlert  
+                    color="primary" 
+                    isOpen={show} 
+                    toggle={
+                        () => { 
+                            setShow(false);
+                        }
+                    }
+                > Please Login with your Near Account! </UncontrolledAlert>
+                <UncontrolledAlert  color="default" placement="top" isOpen={alreadyAlert} toggle={() => setAlreadyAlert(false)}>You are already a member of <strong>{guild.title}</strong></UncontrolledAlert>
+                <UncontrolledAlert  color="success" placement="top" isOpen={joinAlert} toggle={() => setJoinAlert(false)}>You've successfully joined <strong>{guild.title}!</strong></UncontrolledAlert>
+                <UncontrolledAlert  color="warning" placement="top" isOpen={errorAlert} toggle={() => setErrorAlert(false)}>There was an error while processing your request.</UncontrolledAlert>
+            </Col>
         </>
     );
   }

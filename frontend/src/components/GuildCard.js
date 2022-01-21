@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { 
-    Button,
+import {
     Col, 
     Card,
     CardBody,
+    Row,
     UncontrolledTooltip
 } from "reactstrap";
 
@@ -14,50 +14,49 @@ import { setJoinMsg } from "../utils";
 
 export default function GuildCard({guild, guildsUser, setGuildsUser}) { 
     return (
-        <Col sm="3" key={`col-${guild.slug}`}>
-            
-            <Card className="card-plain">     
-                <CardBody>
-                
-                <div className="btn-wrapper profile pt-3">
-                {/*  Passing props through Link’s state */}
-                <Link to={{pathname: `profile-page/${guild.slug}`, state:{guild, guildsUser}}}>
-                    <img
-                        alt={guild.title}
-                        className="img-center img-fluid"
-                        width="128"
-                        height="128"
-                        src={guild.logo}
-                        onError={ 
-                            (e)=>{
-                                e.target.onerror = null;
-                                e.target.src=require("assets/img/logo-nf.png").default
-                            }
-                        }
-                    />  
-                </Link> 
-                    <h4 className="title">{guild.title}</h4>
-                </div>
-                
-                <div className="btn-wrapper profile pt-1 text-center">
-                    <SocialNetworks joined={setJoinMsg(guildsUser, guild.slug)} guild={guild}/> 
-                    <Button
-                        className="btn-icon btn-round"
-                        color="dribbble"
-                        href={guild.website}
-                        id="websiteTooltip"
-                        target="_blank"
-                    >
-                        <i className="fab fa-dribbble" />
-                    </Button>
-                    <UncontrolledTooltip delay={0} target="websiteTooltip">
-                        Visit us
-                    </UncontrolledTooltip>
-                </div>
-                <JoinButton guild={guild} guildsUser={guildsUser || []} setGuildsUser={setGuildsUser}/>
+        <Col className="mt-3" sm="4" key={`col-${guild.slug}`}>
+            <Card >     
+                <CardBody style={{height:'28.5em'}}>
+                    <Row  style={{height:'21.5em'}}>
+                        <Col>  
+                            <div style={{height:'128px'}}>
+                                {/*  Passing props through Link’s state */}
+                                <Link to={{pathname: `detail/${guild.slug}`, state:{guild, guildsUser}}}>
+                                    <img
+                                        alt={guild.title}
+                                        className="img-fluid rounded-circle shadow-lg"
+                                        width="128"
+                                        height="128"
+                                        src={guild.logo}
+                                        id="detailTooltip"
+                                        onError={ 
+                                            (e)=>{
+                                                e.target.onerror = null;
+                                                e.target.src=require("assets/img/logo-nf.png").default
+                                            }
+                                        }
+                                    />  
+                                    <UncontrolledTooltip delay={0} target="detailTooltip">
+                                        More details
+                                    </UncontrolledTooltip>
+                                </Link>
+                            </div>
+                            <h5>
+                                {guild.title} <br/>
+                                <small className="text-muted">
+                                    {guild.oneliner}
+                                </small>
+                            </h5>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="align-items-left">
+                            <SocialNetworks joined={setJoinMsg(guildsUser, guild.slug)} guild={guild}/> 
+                        </Col>
+                        <JoinButton guild={guild} guildsUser={guildsUser || []} setGuildsUser={setGuildsUser} setNumSubs={null} btnSize={"sm"}/>
+                    </Row>
                 </CardBody>
-            </Card>
-                             
+            </Card>     
         </Col>
     );
 }

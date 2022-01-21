@@ -28,6 +28,20 @@ export const GuildsEntities = () => {
                 status: launched
                 contract: skyward.near
              */
+
+            //TODO: Remove these guilds hardcoded after these guilds are adding to entities.json file
+            response.data.push({
+                slug: "near-hispano",
+                title: "NEAR Hispano",
+                oneliner: "Spanish speaking community of NEAR Protocol",
+                website: "https://nearhispano.org/",
+                twitter: "https://twitter.com/nearhispano",
+                telegram: "https://t.me/NEARHispano",
+                medium: "https://nearhispano.medium.com/",
+                youtube: "https://www.youtube.com/channel/UCGJRj-rzdgow2nIAZ_pTkbQ",
+                category: "guild, education, geographical",
+                logo: "/img/near-hispano.png"
+            });
             const guilds = response.data.map(data => {
                 return ({
                     slug: data.slug,
@@ -78,11 +92,11 @@ const getValidateURLLogo = (urlLogo) => {
 }
 
 export const getMainGuilds = (data) => {
-    return data.filter( element => MAIN_GUILDS.includes(element.slug));
+    return data.filter( element => (MAIN_GUILDS.includes(element.slug) && element.category.includes('guild')));
 }
 
 export const getMoreGuilds = (data) => {
-    return data.filter( element => !MAIN_GUILDS.includes(element.slug));
+    return data.filter( element => (!MAIN_GUILDS.includes(element.slug)&& element.category.includes('guild')));
 }
 
 export const getInfoSlug = (guilds, slug) => {

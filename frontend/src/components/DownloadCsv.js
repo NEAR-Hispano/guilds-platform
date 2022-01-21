@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CSVLink } from "react-csv";
 import { 
     Button, 
     UncontrolledAlert,
-    UncontrolledTooltip
+    UncontrolledTooltip, 
+    UncontrolledDropdown, 
+    DropdownToggle, 
+    DropdownMenu, 
+    DropdownItem
   } from "reactstrap";
+import MemberList from "services/SubgraphConnection";
 
   export default function DownloadCsv({slug}) {
     
@@ -16,15 +21,37 @@ import {
     const [errorAlert, setErrorAlert] = React.useState(false);
     const csvLinkElement = React.createRef();
 
+    const [option, setOption ] = React.useState("Select an option.");
+
     const handleGetData = async () => {
 
-        setNotLoggedInAlert(!window.walletConnection.isSignedIn());
+        if(option == "Select an option.") {
+            alert("Please, select an option.")
+        }else if(option == "Blockchain"){
+            setNotLoggedInAlert(!window.walletConnection.isSignedIn());
 
-        if(window.walletConnection.isSignedIn()){
+            if(window.walletConnection.isSignedIn()){
+                setLoading(true);
+                window.contract.get_member_list({slug:slug})
+                .then(response =>{
+                    let processedData = response.map(near_id => ({near_id}))
+                    setData(processedData)
+                    setLoading(false)
+                })
+                .catch(() => {
+                    setErrorAlert(true);
+                    setLoading(false);
+                })
+            }
+        }else if(option == "TheGraph Indexer"){
             setLoading(true);
-            window.contract.get_member_list({slug:slug})
-            .then(response =>{
-                let processedData = response.map(near_id => ({near_id}))
+            MemberList(slug)
+            .then(response => {
+                
+                let processedData = [];
+                response.data.members.map(data => {
+                    processedData.push({member: data.member})
+                })
                 setData(processedData)
                 setLoading(false)
             })
@@ -33,9 +60,10 @@ import {
                 setLoading(false);
             })
         }
+        
     }
 
-    React.useEffect(() => {   
+    useEffect(() => {   
         if(firstLoad){
             setFirstLoad(false)
         } else{
@@ -43,16 +71,32 @@ import {
         }
     }, [data]);
 
+    // useEffect(() => {
+    //     // Wait 5 seconds after download cvs file automatically 
+    //     const timer = setTimeout(() => {
+    //         handleGetData();
+    //     }, 5000);
+    //     return () => clearTimeout(timer);
+    // }, []);
+
     return (
     <>
+        <UncontrolledDropdown>
+            <DropdownToggle caret data-toggle="dropdown">
+                {option}
+            </DropdownToggle>
+            <DropdownMenu>
+                <DropdownItem onClick={() => setOption("Blockchain")}>Blockchain</DropdownItem>
+                <DropdownItem onClick={() => setOption("TheGraph Indexer")}>TheGraph Indexer</DropdownItem>
+            </DropdownMenu>
+        </UncontrolledDropdown>
         <Button
-            className="btn-icon btn-round"
             color="success"
             onClick={handleGetData}
             disabled={loading}
             id="downloadTooltip"
             target="_blank"
-        >   
+        >   Download&nbsp;
             <i 
                 className={loading ? "tim-icons icon-refresh-02": "tim-icons icon-cloud-download-93" } 
             />
