@@ -18,7 +18,7 @@ export default function SignInOutButton () {
                     onClick={login}
                     >  
                         <span className="px-2">
-                            <i className="tim-icons icon-key-25" />
+                            <i className="fas fa-sign-in-alt" />
                             Sign In
                         </span>
                     </Button>
@@ -53,7 +53,7 @@ export default function SignInOutButton () {
                         onClick={logout}
                         >  
                             <span className="px-2">
-                                <i className="tim-icons icon-key-25" />
+                                <i className="fas fa-sign-out-alt" />
                                 Log Out
                             </span>
                         </Button>

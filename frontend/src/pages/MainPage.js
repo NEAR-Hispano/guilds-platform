@@ -81,8 +81,15 @@ export default function MainPage({guilds}) {
             />
             <Container className="text-center">
                 <Row>
-                    <Col md="4">
-                        <hr className="line-primary" />
+                    <Col>
+                        <Col md="4">
+                            <hr className="line-primary" />
+                            
+                        </Col>
+                        <Col md="6">
+                            <hr className="line-primary" />
+                            
+                        </Col>
                         <h2>
                             Find a {" "}
                             <span className="text-primary">Guild that fits your needs</span>
