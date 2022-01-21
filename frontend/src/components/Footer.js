@@ -32,14 +32,9 @@ import {
 export default function Footer() {
     return (
         <footer className="footer">
-          <Container>
-              <Row>
-                  <Col md="3">
-                      <h1 className="title">NEAR•</h1>
-                      <img 
-                          style={{width: "45%"}}
-                          alt="NEAR"
-                          src="https://s3-us-west-1.amazonaws.com/compliance-ico-af-us-west-1/production/token_profiles/logos/original/9d5/c43/cc-/9d5c43cc-e232-4267-aa8a-8c654a55db2d-1608222929-b90bbe4696613e2faeb17d48ac3aa7ba6a83674a.png" />
+            <Container>
+                <Row>
+                    <Col md="9">
                     </Col>
                     <Col md="3">
                         <Nav>
