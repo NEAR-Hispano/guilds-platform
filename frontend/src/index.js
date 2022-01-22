@@ -22,9 +22,10 @@ import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
 import "assets/css/nucleo-icons.css";
 import "assets/scss/blk-design-system-react.scss?v=1.2.0";
 import "assets/demo/demo.css";
-import { initContract } from "services/NearRCP.js";
-import App from "./App.js";
-import ProfilePage from "pages/ProfilePage.js";
+import { initContract } from "services/NearRCP";
+import App from "./App";
+import DetailPage from "pages/DetailPage";
+import DownloadCSVPage from 'pages/DownloadCSVPage';
 
 
 window.nearInitPromise = initContract()
@@ -34,8 +35,12 @@ window.nearInitPromise = initContract()
                 <Switch>
                     <Route path="/guilds" render={(props) => <App {...props} />} />
                     <Route
-                        path="/profile-page/:slug"
-                        render={(props) => <ProfilePage {...props} />}
+                        path="/detail/:slug"
+                        render={(props) => <DetailPage {...props} />}
+                    />
+                    <Route
+                        path="/download-csv/:slug"
+                        render={(props) => <DownloadCSVPage {...props} />}
                     />
                     <Redirect from="/" to="/guilds" />
                 </Switch>

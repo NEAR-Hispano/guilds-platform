@@ -21,24 +21,22 @@ import { useLocation } from "react-router-dom"
 //import PerfectScrollbar from "perfect-scrollbar";
 // reactstrap components
 import {
-    Button,
     Card,
     CardHeader,
-    CardBody,
     Container,
     Row,
     Col,
-    UncontrolledTooltip
 } from "reactstrap";
 
 // core components
-import Navigationbar from "components/Navigationbar.js";
+import IndexNavbar from "components/IndexNavbar.js";
 import Footer from "components/Footer.js";
 import JoinButton from '../components/JoinButton';
-import SocialNetworks from '../components/SocialNetworks';
 import { setJoinMsg } from "../utils";
+import SocialCards from "components/SocialCards";
+import { FloatingButton } from "components/FloatingButton";
 
-export default function ProfilePage({match}) {
+export default function DetailPage({match}) {
     const [guildData, setGuild] = React.useState({});
     const [guildsUser, setGuildsUser] = React.useState("Validating...");
     const [numSubs, setNumSubs] = React.useState('Loading...');
@@ -52,11 +50,23 @@ export default function ProfilePage({match}) {
         /* If member was joining a guild is successfully, 
         * re-query all guilds by user to confirm that user has joined successfully
         */
-        await window.contract.get_guilds_by_user()
-        .then((response) => {
-            setGuildsUser(response);
-        });
+       try {
+            await window.contract.get_guilds_by_user()
+            .then((response) => {
+                setGuildsUser(response);
+            });
+       } catch (error) {
+           console.log(error)
+       }
+        
     }
+    useEffect(() => {
+        document.body.classList.toggle("landing-page");
+        // Specify how to clean up after this effect:
+        return function cleanup() {
+          document.body.classList.toggle("landing-page");
+        };
+    },[]);
 
     useEffect(() => {
         if(location.state?.guildsUser) {
@@ -108,90 +118,86 @@ export default function ProfilePage({match}) {
             document.body.classList.toggle("profile-page");
         };
     }, [match.params.slug]);
+    
 
     return (
         <>
-            <Navigationbar />
+            <IndexNavbar />
+            <FloatingButton/>
             <div className="wrapper">
-                <div className="page-header">
+                <div className="py-lg-5">
                     <img
                         alt="..."
-                        className="dots"
-                        src={require("assets/img/dots.png").default}
+                        className="shapes circle"
+                        src={require("assets/img/cercuri.png").default}
                     />
+                </div>
+                <section className="section section-lg">
                     <img
                         alt="..."
                         className="path"
-                        src={require("assets/img/path4.png").default}
+                        src={require("assets/img/path5.png").default}
                     />
-                    <Container className="align-items-center">
-                        <Row>
-                            <Col className="ml-auto mr-auto" lg="4" md="6">
+                    <Container>
+                        <Row className="row-grid justify-content-between align-items-center text-left">
+                            <Col className="ml-auto mr-auto" lg="4" md="5">
                                 <Card className="card-plain">
                                     <CardHeader>
                                         <img
                                             alt={guildData.title}
                                             className="img-center img-fluid rounded-circle"
                                             src={guildData.logo}
+                                            style={{width:'100%', height: '100%'}}
                                             onError={ 
                                                 (e)=>{
                                                     e.target.onerror = null;
                                                     e.target.src=require("assets/img/logo-nf.png").default
                                                 }
                                           }
-                                          />  
+                                        />  
                                     </CardHeader>
-                                    <CardBody className="text-center">
-                                    <   JoinButton 
-                                        guild={guildData} 
-                                        guildsUser={location.state?.guildsUser || guildsUser} 
-                                        setGuildsUser={setGuildsUser}/>          
-                                    </CardBody>
                                 </Card>
                             </Col>
-                            <Col lg="6" md="6" style={{margin: "auto"}}>
+                        </Row>
+                        <Row  className="row-grid justify-content-between align-items-center text-center">
+                            <Col className="ml-auto mr-auto" lg="10" md="5">
                                 <h6 className="text-on-back">{guildData.title}</h6>
                                 <br/>
-                                <p className="profile-description">
+                                <h4>
                                     {guildData.oneliner}
-                                </p>
-                                <div className="btn-wrapper profile pt-3 text-left">
-                                    <SocialNetworks 
-                                        joined={setJoinMsg(guildsUser, guildData.slug)} 
-                                        guild={guildData}
-                                    /> 
-                                    <Button
-                                        className="btn-icon btn-round"
-                                        color="dribbble"
-                                        href={guildData.website}
-                                        id="websiteTooltip"
-                                        target="_blank"
-                                    >
-                                        <i className="fab fa-dribbble" />
-                                    </Button>
-                                    <UncontrolledTooltip delay={0} target="websiteTooltip">
-                                        Visit us
-                                    </UncontrolledTooltip>
-                                    
+                                </h4>     
+                                <div className="ml-3">
+                                    <h4>
+                                        <span  className="icon icon-success mb-4 mr-3">
+                                            <i className="tim-icons icon-single-02" />
+                                        </span> 
+                                        {numSubs} members
+                                    </h4>
+                                </div>
+                                <div className="float-center">      
+                                    <JoinButton 
+                                        guild={guildData} 
+                                        guildsUser={location.state?.guildsUser || guildsUser} 
+                                        setGuildsUser={setGuildsUser}
+                                        setNumSubs={setNumSubs}
+                                        btnSize={"lg"}/>
                                 </div>
                             </Col>
                         </Row>
                     </Container>
-                  </div>
-                  <div className="section">
-                      <Container>
-                          <Row>
-                              <Col sm="6">
-                                  <Card  bg='primary' style={{ width: '25rem' }} className="mb-6">
-                                      <CardHeader>
-                                          <h2>MEMBERS:&nbsp;&nbsp;<strong>{numSubs}</strong></h2>
-                                      </CardHeader>
-                                  </Card>
-                              </Col>
-                          </Row>
-                      </Container>
-                  </div>       
-                  <Footer />
+                    <section className="section">
+                        <img
+                            alt="..."
+                            className="path"
+                            src={require("assets/img/path4.png").default}
+                        />
+                        <SocialCards 
+                            joined={setJoinMsg(guildsUser, guildData.slug)} 
+                            guild={guildData}
+                        />
+                    </section>
+                </section>
+                <Footer />
             </div>
         </>
     );
