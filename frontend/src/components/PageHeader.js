@@ -35,8 +35,8 @@ export default function PageHeader() {
             <div className="squares square7" />
             <div style={{height:'200px'}}/>
             <Container>
-                <Row>
-                    <Col md="10" xl="8">
+                <Row  className="justify-content-center">
+                    <Col md="9" xl="8">
                         <h4 className="text-on-back">
                             Join to awesome guilds on Blockchain
                         </h4>       
