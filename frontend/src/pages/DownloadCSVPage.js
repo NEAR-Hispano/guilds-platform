@@ -31,6 +31,7 @@ import {
 import IndexNavbar from "components/IndexNavbar";
 import Footer from "components/Footer";
 import DownloadCsv from '../components/DownloadCsv';
+import { FloatingButton } from "components/FloatingButton";
 
 export default function DownloadCSVPage({match}) {
     
@@ -54,6 +55,7 @@ export default function DownloadCSVPage({match}) {
     return (
         <>
             <IndexNavbar />
+            <FloatingButton/>
             <div className="wrapper">
                 <div className="page-header">
                     <img

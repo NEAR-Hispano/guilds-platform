@@ -24,6 +24,7 @@ import Footer from "components/Footer.js";
 
 import MainPage from "pages/MainPage";
 import { GuildsEntities, getMainGuilds, getMoreGuilds } from 'services/GuildsEntities';
+import { FloatingButton } from "components/FloatingButton";
 
 
 export default function App() {
@@ -68,8 +69,10 @@ export default function App() {
     return (
         <>
             <IndexNavbar />
-            <div className="wrapper">
+            <FloatingButton/>
+            <div className="wrapper"> 
                 <PageHeader />
+              
                 <div className="main">
                     <MainPage guilds={[...mainGuilds, ...moreGuilds]} />
                     {/* <MainPage guilds={[...mainGuilds, ...moreGuilds]} />  */}

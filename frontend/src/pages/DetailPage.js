@@ -34,6 +34,7 @@ import Footer from "components/Footer.js";
 import JoinButton from '../components/JoinButton';
 import { setJoinMsg } from "../utils";
 import SocialCards from "components/SocialCards";
+import { FloatingButton } from "components/FloatingButton";
 
 export default function DetailPage({match}) {
     const [guildData, setGuild] = React.useState({});
@@ -122,6 +123,7 @@ export default function DetailPage({match}) {
     return (
         <>
             <IndexNavbar />
+            <FloatingButton/>
             <div className="wrapper">
                 <div className="py-lg-5">
                     <img
