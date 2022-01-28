@@ -18,7 +18,7 @@ export const FloatingButton = () => {
                     margin:'1em',
                     background: 'rgb(236 87 1)',
                     height: '4em',
-                    zIndex: '1'
+                    zIndex: '20'
                 }}
                 onClick={handleClick}
             >
