@@ -6,8 +6,8 @@ const client = new ApolloClient({
     cache: new InMemoryCache(),
 });
 
-export default async function MemberList(slug) {
-    const MEMBERS_QUERY = `
+export async function MemberList(slug) {
+    const query = `
      query{
         members(where: {guild: "${slug}"}) {
             member
@@ -15,7 +15,21 @@ export default async function MemberList(slug) {
       }
     `;
 
-    let data = await client.query({query: gql(MEMBERS_QUERY)});
+    let data = await client.query({query: gql(query)});
+
+    return data;
+}
+
+export async function GuildsByUser(user) {
+    const query = `
+     query{
+        members(where: {member: "${user}"}) {
+            member
+        }
+      }
+    `;
+
+    let data = await client.query({query: gql(query)});
 
     return data;
 }

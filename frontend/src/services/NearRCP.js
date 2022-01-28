@@ -4,7 +4,7 @@ import { NODE_ENV, CONTRACT_NAME } from './../variables/Constants';
 
 import getConfig from './../config';
 
-const nearConfig = getConfig(NODE_ENV || 'testnet');
+const nearConfig = getConfig(NODE_ENV);
 
 export async function initContract() {
     // Initialize connection to the NEAR testnet
