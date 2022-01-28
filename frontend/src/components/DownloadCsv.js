@@ -9,7 +9,7 @@ import {
     DropdownMenu, 
     DropdownItem
   } from "reactstrap";
-import MemberList from "services/SubgraphConnection";
+import {MemberList} from "services/SubgraphConnection";
 
   export default function DownloadCsv({slug}) {
     
@@ -104,7 +104,7 @@ import MemberList from "services/SubgraphConnection";
         <UncontrolledTooltip delay={0} target="downloadTooltip">
             Download NEAR ID's Account
         </UncontrolledTooltip>
-
+        
         <CSVLink
             data={data}
             filename={`${slug}_member_list.csv`}
@@ -124,5 +124,6 @@ import MemberList from "services/SubgraphConnection";
         >
             There was an error while processing your request.
         </UncontrolledAlert >
+        <div style={{margin: '50px'}}/>
     </>);
   }

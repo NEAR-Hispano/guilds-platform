@@ -35,6 +35,7 @@ import JoinButton from '../components/JoinButton';
 import { setJoinMsg } from "../utils";
 import SocialCards from "components/SocialCards";
 import { FloatingButton } from "components/FloatingButton";
+import { GuildsByUser } from "services/SubgraphConnection";
 
 export default function DetailPage({match}) {
     const [guildData, setGuild] = React.useState({});
@@ -51,6 +52,14 @@ export default function DetailPage({match}) {
         * re-query all guilds by user to confirm that user has joined successfully
         */
        try {
+            // await GuildsByUser(window.accountId)
+            // .then((response) => {
+            //     let processedData = [];
+            //     response.data.members.map(data => {
+            //         processedData.push({member: data.member})
+            //     })
+            //     setGuildsUser(processedData);
+            // });
             await window.contract.get_guilds_by_user()
             .then((response) => {
                 setGuildsUser(response);

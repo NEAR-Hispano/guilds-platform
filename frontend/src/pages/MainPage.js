@@ -23,6 +23,7 @@ import {
     Row
 } from "reactstrap";
 import { useEffect, useState } from "react";
+import { GuildsByUser } from "services/SubgraphConnection";
 
 export default function MainPage({guilds}) {
     const [loaded, setLoaded] = useState(true);
@@ -55,6 +56,14 @@ export default function MainPage({guilds}) {
     
     const getGuildsByUser = async () => {
         if (window.walletConnection.isSignedIn()) {
+            // await GuildsByUser(window.accountId)
+            // .then((response) => {
+            //     let processedData = [];
+            //     response.data.members.map(data => {
+            //         processedData.push({member: data.member})
+            //     })
+            //     setGuildsUser(processedData);
+            // });
             await window.contract.get_guilds_by_user()
             .then(response => {
                 setGuildsUser(response);
