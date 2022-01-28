@@ -1,10 +1,11 @@
-import { near, log, BigInt, json, JSONValueKind } from "@graphprotocol/graph-ts";
+import { near, log, BigInt, json, JSONValueKind, JSONValue } from "@graphprotocol/graph-ts";
 import { Member, Guild } from "../generated/schema";
 
 export function handleReceipt(receipt: near.ReceiptWithOutcome): void {
   const actions = receipt.receipt.actions;
-  
+
   for (let i = 0; i < actions.length; i++) {
+    
     handleAction(
       actions[i], 
       receipt.receipt, 
@@ -13,6 +14,60 @@ export function handleReceipt(receipt: near.ReceiptWithOutcome): void {
       receipt.receipt.signerPublicKey
       );
   }
+}
+
+class GuildLog {
+  result: string;
+  method: string;
+  guild: string;
+  user: string;
+  message: string;
+  log: string;
+
+  constructor(){
+
+    this.result = "";
+    this.method = "";
+    this.guild = "";
+    this.user = "";
+    this.message = "";
+    this.log = "";
+  }
+}
+
+function createGuildLog(value: string): GuildLog{
+  let obj = json.fromString(value).toObject();
+  let newLog = new GuildLog();
+  
+  //It has to be written this way... ternary operator doesn't work
+  let res = obj.get("result");
+  if(res != null){
+    newLog.result = res.toString();
+  }
+
+  let met = obj.get("method");
+  if(met != null){
+    newLog.method = met.toString();
+  }
+
+  let gld = obj.get("guild");
+  if(gld != null){
+    newLog.guild = gld.toString();
+  }
+
+  let usr = obj.get("user");
+  if(usr != null){
+    newLog.user = usr.toString();
+  }
+
+  let msg = obj.get("message");
+  if(msg != null){
+    newLog.message = msg.toString();
+  }
+  newLog.log = value;
+
+  return newLog;
+
 }
 
 function handleAction(
@@ -32,6 +87,8 @@ function handleAction(
 
   // change the methodName here to the methodName emitting the log in the contract
   if (functionCall.methodName == "join_guild") {
+    let result: GuildLog;
+
     const receiptId = receipt.id.toBase58();
 
       // Maps the formatted log to the LOG entity
@@ -51,14 +108,17 @@ function handleAction(
       members.executorId = outcome.executorId
       members.outcomeBlockHash = outcome.blockHash.toBase58()
 
-      // Log parsing
       if(outcome.logs != null && outcome.logs.length > 0){
-        members.log = outcome.logs[0]
-        let splitString = outcome.logs[0].split(' ')
-        if(splitString != null){ 
-          members.member = splitString[0].slice(1, -1)
-          members.guild = splitString[3].slice(1, -2)
+        for(let i = 0; i < outcome.logs.length; i++){
+          result = createGuildLog(outcome.logs[i]);
+
+          if(result.method == "join_guild" && result.result == "error"){
+            return;
+          }
         }
+        members.log = result.log;
+        members.member = result.user;
+        members.guild = result.guild;
       }
 
       members.save()
@@ -69,6 +129,7 @@ function handleAction(
 
   // change the methodName here to the methodName emitting the log in the contract
   if (functionCall.methodName == "create_guild") {
+    let result: GuildLog;
     const receiptId = receipt.id.toBase58();
 
       // Maps the formatted log to the LOG entity
@@ -87,14 +148,17 @@ function handleAction(
       guilds.outcomeId = outcome.id.toBase58()
       guilds.executorId = outcome.executorId
       guilds.outcomeBlockHash = outcome.blockHash.toBase58()
-
-      // Log parsing
+      
       if(outcome.logs != null && outcome.logs.length > 0){
-        guilds.log = outcome.logs[0]
-        let splitString = outcome.logs[0].split(' ')
-          if(splitString != null){
-            guilds.guild = splitString[2].slice(1, -1)
+        for(let i = 0; i < outcome.logs.length; i++){
+          result = createGuildLog(outcome.logs[i]);
+
+          if(result.method == "create_guild" && result.result == "error"){
+            return;
           }
+        }
+        guilds.log = result.log;
+        guilds.guild = result.guild;
       }
 
       guilds.save()
