@@ -4,7 +4,7 @@ import { NODE_ENV, CONTRACT_NAME } from './../variables/Constants';
 
 import getConfig from './../config';
 
-const nearConfig = getConfig(NODE_ENV || 'testnet');
+const nearConfig = getConfig(NODE_ENV);
 
 export async function initContract() {
     // Initialize connection to the NEAR testnet
@@ -24,14 +24,14 @@ export async function initContract() {
     window.contract = await new Contract(window.walletConnection.account(), CONTRACT_NAME, {
         // View methods are read only. They don't modify the state, but usually return some value.
         viewMethods: [
-            'get_num_members'
+            'get_num_members',
+            'get_guilds_by_user'
         ],
         // Change methods can modify the state. But you don't receive the returned value when called.
         changeMethods: [
             'get_guild_info',
             'join_guild',
             'check_if_member',
-            'get_guilds_by_user',
             'get_member_list'
         ],
     });

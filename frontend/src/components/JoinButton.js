@@ -7,7 +7,6 @@ import {
 import { MAIN_GUILDS } from "variables/Constants";
 import { login } from '../services/NearRCP';
 
-
 export default function JoinButton({guild, guildsUser, setGuildsUser, setNumSubs, btnSize}) {  
     const [show, setShow] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
@@ -38,19 +37,42 @@ export default function JoinButton({guild, guildsUser, setGuildsUser, setNumSubs
                     /* If member was joining a guild is successfully, 
                     * re-query all guilds by user to confirm that user has joined successfully
                     */
-                    window.contract.get_guilds_by_user()
-                    .then((response) => {
-                        setJoinAlert(true);
-                        setGuildsUser(response);
-                        setLoading(false);
-                        response.includes(guild.slug) ? setMsgJoin("JOINED") : setMsgJoin("JOIN US")
 
-                        //To recalculate the number of subs
-                        //ONLY if the set function was sent
-                        if(setNumSubs !== null){
-                            window.contract.get_num_members({slug:guild.slug})
-                            .then(response => {
-                                setNumSubs(response)
+                    //This code replaces de query to the blockchain by querying a subgraph instead.
+                    // GuildsByUser(window.accountId)
+                    // .then((response) => {
+                    //     let processedData = [];
+                    //     response.data.members.map(data => {
+                    //         processedData.push({member: data.member})
+                    //     })
+
+                    //     setJoinAlert(true);
+                    //     setGuildsUser(processedData);
+                    //     setLoading(false);
+                    //     processedData.includes(guild.slug) ? setMsgJoin("JOINED") : setMsgJoin("JOIN US")
+
+                    //     //To recalculate the number of subs
+                    //     //ONLY if the set function was sent
+                    //     if(setNumSubs !== null){
+                    //         window.contract.get_num_members({slug:guild.slug})
+                    //         .then(response => {
+                    //             setNumSubs(response)
+                    //         })
+                    //     }
+                    // })
+                    window.contract.get_guilds_by_user({user: window.contract.account.accountId})
+                        .then((response) => {
+                            setJoinAlert(true);
+                            setGuildsUser(response);
+                            setLoading(false);
+                            response.includes(guild.slug) ? setMsgJoin("JOINED") : setMsgJoin("JOIN US")
+
+                            //To recalculate the number of subs
+                            //ONLY if the set function was sent
+                            if(setNumSubs !== null){
+                                window.contract.get_num_members({slug:guild.slug})
+                                .then(response => {
+                                    setNumSubs(response)
                             })
                         }
                     });
