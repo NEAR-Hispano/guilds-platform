@@ -35,7 +35,7 @@ import JoinButton from '../components/JoinButton';
 import { setJoinMsg } from "../utils";
 import SocialCards from "components/SocialCards";
 import { FloatingButton } from "components/FloatingButton";
-import { GuildsByUser } from "services/SubgraphConnection";
+import { getInfoSlug } from "services/GuildsEntities";
 
 export default function DetailPage({match}) {
     const [guildData, setGuild] = React.useState({});
@@ -45,7 +45,7 @@ export default function DetailPage({match}) {
 
     //Getting state passed by link route
     const location = useLocation();
-    const info = location.state?.guild;
+    
 
     const getGuildUser = async () => {
         /* If member was joining a guild is successfully, 
@@ -60,7 +60,7 @@ export default function DetailPage({match}) {
             //     })
             //     setGuildsUser(processedData);
             // });
-            await window.contract.get_guilds_by_user()
+            await window.contract.get_guilds_by_user({user: window.contract.account.accountId})
             .then((response) => {
                 setGuildsUser(response);
             });
@@ -95,17 +95,12 @@ export default function DetailPage({match}) {
             setNumSubs('0');
         });   
     }
-  
-    useEffect(() => {
-        if (info) {
-            localStorage.setItem('GUILD', JSON.stringify(info));
-        }    
-      
-    }, [info]);
 
     useEffect(() => {
-        setGuild(info || JSON.parse(localStorage.getItem('GUILD')));
-    }, [info]);
+        getInfoSlug(match.params.slug).then(response => {
+            setGuild(response);
+        });
+    }, [match.params.slug]);
 
     useEffect(() => {
         handleSubs();

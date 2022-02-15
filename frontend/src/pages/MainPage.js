@@ -64,7 +64,7 @@ export default function MainPage({guilds}) {
             //     })
             //     setGuildsUser(processedData);
             // });
-            await window.contract.get_guilds_by_user()
+            await window.contract.get_guilds_by_user({user: window.contract.account.accountId})
             .then(response => {
                 setGuildsUser(response);
             })

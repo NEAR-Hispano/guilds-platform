@@ -38,12 +38,12 @@ export default function PageHeader() {
                 <Row  className="justify-content-center">
                     <Col md="9" xl="8">
                         <h4 className="text-on-back">
-                            Join to awesome guilds on Blockchain
+                            Join awesome guilds on Blockchain
                         </h4>       
                         <hr className="line-info" />
                         <h3>
                             Guilds platform is  {" "}
-                            <span className="text-info">on chain DApp </span>
+                            <span className="text-info">an on chain DApp </span>
                             {" "} that allows you to start your path into NEAR communities.
                         </h3> 
                     </Col>

@@ -6,7 +6,6 @@ import {
   } from "reactstrap";
 import { MAIN_GUILDS } from "variables/Constants";
 import { login } from '../services/NearRCP';
-import { GuildsByUser } from "services/SubgraphConnection";
 
 export default function JoinButton({guild, guildsUser, setGuildsUser, setNumSubs, btnSize}) {  
     const [show, setShow] = React.useState(false);
@@ -61,19 +60,19 @@ export default function JoinButton({guild, guildsUser, setGuildsUser, setNumSubs
                     //         })
                     //     }
                     // })
-                    window.contract.get_guilds_by_user()
-                    .then((response) => {
-                        setJoinAlert(true);
-                        setGuildsUser(response);
-                        setLoading(false);
-                        response.includes(guild.slug) ? setMsgJoin("JOINED") : setMsgJoin("JOIN US")
+                    window.contract.get_guilds_by_user({user: window.contract.account.accountId})
+                        .then((response) => {
+                            setJoinAlert(true);
+                            setGuildsUser(response);
+                            setLoading(false);
+                            response.includes(guild.slug) ? setMsgJoin("JOINED") : setMsgJoin("JOIN US")
 
-                        //To recalculate the number of subs
-                        //ONLY if the set function was sent
-                        if(setNumSubs !== null){
-                            window.contract.get_num_members({slug:guild.slug})
-                            .then(response => {
-                                setNumSubs(response)
+                            //To recalculate the number of subs
+                            //ONLY if the set function was sent
+                            if(setNumSubs !== null){
+                                window.contract.get_num_members({slug:guild.slug})
+                                .then(response => {
+                                    setNumSubs(response)
                             })
                         }
                     });
