@@ -178,13 +178,14 @@ export default function DetailPage({match}) {
                                         {numSubs} members
                                     </h4>
                                 </div>
-                                <div className="float-center">      
+                                <div className="float-center">   
                                     <JoinButton 
                                         guild={guildData} 
                                         guildsUser={location.state?.guildsUser || guildsUser} 
                                         setGuildsUser={setGuildsUser}
                                         setNumSubs={setNumSubs}
                                         btnSize={"lg"}/>
+                                    <hr/>
                                 </div>
                             </Col>
                         </Row>
